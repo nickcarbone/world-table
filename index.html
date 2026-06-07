@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The World Table</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0a08;
+  --bg-card: #141008;
+  --bg-card-hover: #1c1810;
+  --bg-modal: #111008;
+  --border: #2a2318;
+  --border-light: #352c1e;
+  --gold: #c8872a;
+  --gold-light: #e4c07a;
+  --gold-dim: #7a5520;
+  --cream: #f2e8d5;
+  --muted: #9a8870;
+  --faint: #5a5040;
+  --europe: #3a6080;
+  --east-asia: #3a7040;
+  --south-asia: #a84030;
+  --mena: #a06820;
+  --africa: #806020;
+  --americas: #6a3a80;
+  --deep: #50505a;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+.site-header {
+  padding: 72px 48px 48px;
+  position: relative;
+  overflow: hidden;
+}
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,135,42,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.header-kicker {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+.header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(56px, 8vw, 110px);
+  font-weight: 300;
+  line-height: 0.92;
+  color: var(--cream);
+  letter-spacing: -0.02em;
+}
+.header-title em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+.header-sub {
+  margin-top: 24px;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 540px;
+  line-height: 1.7;
+}
+.header-rule {
+  margin-top: 48px;
+  height: 1px;
+  background: linear-gradient(to right, var(--gold-dim), transparent);
+}
+.header-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: var(--gold-light);
+  line-height: 1;
+}
+.stat-label {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* ── CONTROLS ── */
+.controls {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(12, 10, 8, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 48px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.search-wrap {
+  position: relative;
+  flex: 0 0 260px;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--faint);
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--cream);
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 9px 12px 9px 34px;
+  outline: none;
+  transition: border-color 0.2s;
+  letter-spacing: 0.02em;
+}
+.search-input:focus { border-color: var(--gold-dim); }
+.search-input::placeholder { color: var(--faint); }
+.filter-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.pill {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pill:hover { border-color: var(--border-light); color: var(--cream); }
+.pill.active { background: var(--gold); border-color: var(--gold); color: #0c0a08; font-weight: 600; }
+.pill[data-region="europe"].active { background: var(--europe); border-color: var(--europe); color: #fff; }
+.pill[data-region="east_asia"].active { background: var(--east-asia); border-color: var(--east-asia); color: #fff; }
+.pill[data-region="south_asia"].active { background: var(--south-asia); border-color: var(--south-asia); color: #fff; }
+.pill[data-region="mena"].active { background: var(--mena); border-color: var(--mena); color: #fff; }
+.pill[data-region="africa"].active { background: var(--africa); border-color: var(--africa); color: #fff; }
+.pill[data-region="americas"].active { background: var(--americas); border-color: var(--americas); color: #fff; }
+
+/* ── GRID ── */
+.main-content { padding: 40px 48px 80px; }
+.section-label {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+#dish-count {
+  color: var(--gold);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.card {
+  background: var(--bg-card);
+  padding: 28px 28px 24px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--region-color, var(--border));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.card:hover { background: var(--bg-card-hover); }
+.card:hover::before { transform: scaleX(1); }
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-flag-country {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-flag { font-size: 16px; }
+.region-badge {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid var(--region-color, var(--border));
+  color: var(--region-color, var(--muted));
+}
+.card-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--cream);
+  letter-spacing: -0.01em;
+}
+.card-myth {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  padding-left: 12px;
+  border-left: 2px solid var(--gold-dim);
+  font-style: italic;
+}
+.card-meta {
+  display: flex;
+  gap: 16px;
+  margin-top: auto;
+}
+.meta-item {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.meta-item span {
+  color: var(--muted);
+  font-weight: 500;
+}
+.card-arrow {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  color: var(--gold-dim);
+  font-size: 18px;
+  transition: transform 0.2s, color 0.2s;
+}
+.card:hover .card-arrow { transform: translate(3px, -3px); color: var(--gold); }
+
+/* ── NO RESULTS ── */
+.no-results {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--faint);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  font-style: italic;
+}
+
+/* ── DEEP END ── */
+.deep-end-section {
+  margin-top: 80px;
+  padding: 0 48px 80px;
+}
+.deep-end-header {
+  display: flex;
+  align-items: flex-end;
+  gap: 32px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.deep-end-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 52px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--cream);
+  line-height: 1;
+}
+.deep-end-sub {
+  font-size: 12px;
+  color: var(--muted);
+  max-width: 400px;
+  line-height: 1.7;
+  padding-bottom: 4px;
+}
+.deep-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.deep-card {
+  background: #0e0c0a;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.deep-card-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: -0.01em;
+}
+.deep-card-country {
+  font-size: 11px;
+  color: var(--faint);
+  letter-spacing: 0.08em;
+}
+.deep-card-why {
+  font-size: 11px;
+  color: var(--faint);
+  line-height: 1.6;
+  border-left: 1px solid var(--border-light);
+  padding-left: 10px;
+  margin-top: 4px;
+}
+.deep-badge {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--deep);
+  border: 1px solid var(--deep);
+  padding: 2px 8px;
+  align-self: flex-start;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(8, 6, 4, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.modal {
+  background: var(--bg-modal);
+  border: 1px solid var(--border-light);
+  width: 100%;
+  max-width: 780px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transform: translateY(20px);
+  transition: transform 0.3s;
+}
+.modal-overlay.open .modal {
+  transform: translateY(0);
+}
+.modal-top {
+  padding: 36px 40px 0;
+  flex-shrink: 0;
+}
+.modal-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.modal-flag { font-size: 22px; }
+.modal-country {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.modal-region-badge {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border: 1px solid var(--region-color, var(--border));
+  color: var(--region-color, var(--muted));
+}
+.modal-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(34px, 5vw, 52px);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--cream);
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.modal-myth-box {
+  background: rgba(200, 135, 42, 0.06);
+  border-left: 3px solid var(--gold);
+  padding: 10px 16px;
+  margin-bottom: 24px;
+}
+.modal-myth-label {
+  font-size: 8px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 4px;
+}
+.modal-myth-text {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--gold-light);
+}
+.modal-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin: 0 40px;
+  gap: 0;
+  flex-shrink: 0;
+}
+.tab-btn {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  color: var(--faint);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.tab-btn:hover { color: var(--muted); }
+.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+.modal-body {
+  overflow-y: auto;
+  padding: 32px 40px 40px;
+  flex: 1;
+}
+.modal-body::-webkit-scrollbar { width: 4px; }
+.modal-body::-webkit-scrollbar-track { background: transparent; }
+.modal-body::-webkit-scrollbar-thumb { background: var(--border-light); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.prose-section {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.prose-section p { margin-bottom: 16px; }
+.prose-section strong { color: var(--cream); font-weight: 500; }
+.prose-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 12px;
+}
+
+/* Recipe styles */
+.recipe-meta {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.recipe-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.recipe-meta-label {
+  font-size: 8px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.recipe-meta-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--cream);
+  line-height: 1;
+}
+.recipe-section-title {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 12px;
+  margin-top: 28px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.ingredients-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ingredients-list li {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  padding-left: 16px;
+  position: relative;
+}
+.ingredients-list li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--gold-dim);
+}
+.steps-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.steps-list li {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.step-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--gold-dim);
+  flex-shrink: 0;
+  line-height: 1.2;
+  width: 24px;
+  text-align: right;
+}
+.recipe-note {
+  margin-top: 20px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--faint);
+  line-height: 1.6;
+  font-style: italic;
+}
+.recipe-note strong { color: var(--muted); font-weight: 500; }
+
+/* close button */
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--faint);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+  z-index: 2;
+}
+.modal-close:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.footer-left {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--faint);
+}
+.footer-right {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+@media (max-width: 768px) {
+  .site-header { padding: 48px 24px 36px; }
+  .controls { padding: 14px 24px; }
+  .main-content { padding: 32px 24px 60px; }
+  .modal-top { padding: 28px 24px 0; }
+  .modal-tabs { margin: 0 24px; }
+  .modal-body { padding: 24px 24px 32px; }
+  .deep-end-section { padding: 0 24px 60px; }
+  footer { padding: 20px 24px; }
+  .header-stats { gap: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-kicker">A Curated Global Dish Database</div>
+  <h1 class="header-title">The <em>World</em><br>Table</h1>
+  <p class="header-sub">Forty of the world's most recognised, beloved, and supposedly impossible dishes — made honest, made possible, made at home. Every recipe adapted. Every myth addressed.</p>
+  <div class="header-rule"></div>
+  <div class="header-stats">
+    <div class="stat"><span class="stat-num">40</span><span class="stat-label">Dishes</span></div>
+    <div class="stat"><span class="stat-num">29</span><span class="stat-label">Countries</span></div>
+    <div class="stat"><span class="stat-num">6</span><span class="stat-label">Regions</span></div>
+    <div class="stat"><span class="stat-num">+6</span><span class="stat-label">The Deep End</span></div>
+  </div>
+</header>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="search-wrap">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" class="search-input" id="search" placeholder="Search dishes or countries…">
+  </div>
+  <div class="filter-pills">
+    <button class="pill active" data-region="all">All</button>
+    <button class="pill" data-region="europe">Europe</button>
+    <button class="pill" data-region="east_asia">East &amp; SE Asia</button>
+    <button class="pill" data-region="south_asia">South Asia</button>
+    <button class="pill" data-region="mena">Middle East &amp; N. Africa</button>
+    <button class="pill" data-region="africa">Sub-Saharan Africa</button>
+    <button class="pill" data-region="americas">The Americas</button>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<main class="main-content">
+  <div class="section-label"><span id="dish-count">40</span>&nbsp;dishes</div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<!-- DEEP END -->
+<section class="deep-end-section">
+  <div class="deep-end-header">
+    <div class="deep-end-title">The Deep End</div>
+    <p class="deep-end-sub">These dishes are genuinely difficult. Not myths — real barriers of technique, equipment, or ingredient access. They belong in the conversation. They don't belong in this database.</p>
+  </div>
+  <div class="deep-grid" id="deep-grid"></div>
+</section>
+
+<footer>
+  <span class="footer-left">The World Table</span>
+  <span class="footer-right">40 Dishes · Adapted for Home</span>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modal-close">✕</button>
+    <div class="modal-top">
+      <div class="modal-kicker">
+        <span class="modal-flag" id="m-flag"></span>
+        <span class="modal-country" id="m-country"></span>
+        <span class="modal-region-badge" id="m-badge"></span>
+      </div>
+      <h2 class="modal-title" id="m-title"></h2>
+      <div class="modal-myth-box">
+        <div class="modal-myth-label">The Myth, Busted</div>
+        <div class="modal-myth-text" id="m-myth"></div>
+      </div>
+    </div>
+    <div class="modal-tabs">
+      <button class="tab-btn active" data-tab="history">History &amp; Culture</button>
+      <button class="tab-btn" data-tab="appeal">Global Appeal</button>
+      <button class="tab-btn" data-tab="recipe">Recipe</button>
+    </div>
+    <div class="modal-body">
+      <div class="tab-content active" id="tab-history"></div>
+      <div class="tab-content" id="tab-appeal"></div>
+      <div class="tab-content" id="tab-recipe"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const REGION_META = {
+  europe:     { label: 'Europe',             color: '#4a6a8a' },
+  east_asia:  { label: 'East & SE Asia',     color: '#4a7a4a' },
+  south_asia: { label: 'South Asia',         color: '#b05040' },
+  mena:       { label: 'Middle East & N. Africa', color: '#a07030' },
+  africa:     { label: 'Sub-Saharan Africa', color: '#8a6820' },
+  americas:   { label: 'The Americas',       color: '#6a3a8a' },
+};
+
+const DISHES = [
+  // ── EUROPE ──
+  {
+    name: 'Boeuf Bourguignon', country: 'France', flag: '🇫🇷', region: 'europe',
+    time: '3.5 hrs', serves: 6, difficulty: 'Moderate',
+    myth: 'The oven does 90% of the work. You brown the beef, pour in the wine, and walk away.',
+    history: `<p><strong>Boeuf Bourguignon</strong> was born not in the kitchens of Parisian restaurants but in the peasant farmhouses of Burgundy, where cheap, tough cuts of beef needed long, slow cooking to become edible. Red wine — the region's most abundant resource — was the braising liquid of necessity, not indulgence. The dish existed for centuries as everyday rural food before it was elevated to the French culinary canon.</p><p>Its global moment came in 1961, when Julia Child published her adaptation in <em>Mastering the Art of French Cooking</em>, transforming it from a regional stew into a cultural symbol of serious home cooking. It has never left the cultural imagination since.</p>`,
+    appeal: `<p>Beef braised in wine is one of the most universally appealing flavour profiles on earth — deeply savoury, rich, and slightly acidic in a way that makes everything feel complete. The pearl onions, lardons, and mushrooms give it a visual and textural generosity that reads as celebratory in any culture.</p><p>It also travels because it is genuinely forgiving. Unlike precision cooking, Bourguignon rewards patience and time rather than technique. The longer it cooks, the better it gets — a principle that resonates across every cooking tradition in the world.</p>`,
+    ingredients: ['1.5kg beef chuck or stewing beef, cut into large cubes','200g lardons or thick-cut bacon, cut into strips','1 bottle Burgundy or other sturdy red wine','400ml good beef stock','300g mushrooms, quartered','200g pearl onions or small shallots','4 garlic cloves, smashed','2 carrots, roughly chopped','2 tbsp tomato paste','Bouquet garni (thyme, bay, parsley)','Olive oil, flour, salt, black pepper'],
+    steps: ['Pat beef cubes completely dry. Season generously. Brown in batches in a hot Dutch oven with oil — do not crowd the pan. This takes patience but builds the foundation.','Remove beef. In the same pot, render lardons until crisp. Add carrots and garlic briefly. Stir in tomato paste and cook 1 minute.','Return beef to pot. Add wine and stock until beef is barely submerged. Add bouquet garni. Bring to a simmer.','Cover and cook in a 160°C oven (or on the lowest possible hob heat) for 2.5–3 hours, until the beef is completely tender and yielding.','In a separate pan, sauté mushrooms until golden. Blanch pearl onions, peel, then caramelise in butter. Add both to the stew for the final 30 minutes.','If the sauce is too thin, remove the beef and reduce on high heat until coating consistency, then return the beef. Check seasoning. Serve with buttered egg noodles or crusty bread.'],
+    note: 'Make it the day before — the flavour improves overnight as the wine and beef continue to meld. Reheat gently.'
+  },
+  {
+    name: 'Coq au Vin', country: 'France', flag: '🇫🇷', region: 'europe',
+    time: '2 hrs', serves: 4, difficulty: 'Easy',
+    myth: 'It is essentially wine-braised chicken. If you can sauté an onion, you can make this.',
+    history: `<p>The name means simply "rooster in wine," and that is what it was: a method of making an old, tough cockerel palatable by braising it slowly in wine. Versions of this technique appear across France under different regional names, and the dish likely predates any formal recipe by centuries. Wine was the cheapest available liquid for country cooks, and an elderly bird needed long cooking.</p><p>The version most people know is a 20th-century bistro codification, standardised with lardons, pearl onions, and mushrooms. It became a French cultural touchstone not because it was refined but because it was honest — it tastes exactly as it looks.</p>`,
+    appeal: `<p>Wine-braised chicken with mushrooms and smoky bacon is a combination so fundamentally appealing that versions of it appear in almost every cuisine. The French simply got there first and named it definitively. The dish is simultaneously rustic and elegant — deeply comforting without being heavy.</p><p>It is also infinitely adaptable. White wine versions exist in Alsace. Different regions use different wines entirely. This malleability is part of its global travelling power: people can recognise it, adapt it, and call it their own.</p>`,
+    ingredients: ['1 whole chicken, jointed (or 8 bone-in thighs and legs)','200g lardons or thick-cut bacon','1 bottle red wine (Burgundy, Rhône, or similar)','250ml chicken stock','250g mushrooms, halved','200g pearl onions or small shallots','4 garlic cloves','2 tbsp tomato paste','Fresh thyme, bay leaves','Butter, olive oil, flour, salt, pepper'],
+    steps: ['Optional but worthwhile: marinate chicken pieces in wine overnight with herbs and garlic. Drain before cooking; pat dry.','Season chicken and brown all over in a Dutch oven in oil and butter. Remove. Render lardons until crisp.','Add onions and garlic. Cook until lightly coloured. Stir in tomato paste.','Return chicken. Add wine (and marinade if used) and stock. Add thyme and bay. Bring to a simmer.','Cover and cook on very low heat for 1–1.5 hours. Chicken is done when the meat falls easily from the bone.','Add mushrooms for the final 20 minutes. If the sauce is thin, remove the chicken and reduce briefly. Finish with a small knob of butter stirred in off the heat.'],
+    note: 'A Coq au Vin made the day before and reheated is considerably better than one served immediately.'
+  },
+  {
+    name: 'Bouillabaisse', country: 'France', flag: '🇫🇷', region: 'europe',
+    time: '1.5 hrs', serves: 6, difficulty: 'Moderate',
+    myth: 'It started as a fisherman\'s scrap stew. Any firm white fish works — it does not need to be exotic.',
+    history: `<p>Bouillabaisse originated in the ancient port of Marseille as a way to sell the fish that remained unsold at the end of each day — the scraps, the bony fish, the ones too ugly or too small for regular trade. The name likely derives from the Provençal cooking instruction: <em>bouil</em> (boil) and <em>abaisse</em> (lower the heat). The saffron and fennel came from the spice trade passing through Marseille's port.</p><p>It became so important to Marseillais identity that in 1980 a group of eleven chefs wrote the <em>Charte de la Bouillabaisse</em> — a formal declaration of what the dish must contain. That a fish stew required a legal charter tells you everything about the French relationship to food.</p>`,
+    appeal: `<p>A saffron-scented, anise-perfumed fish stew served with rouille and toasted bread appeals to almost every palate that enjoys seafood. The flavour is simultaneously briny and warming, with the saffron giving it a colour and depth that reads as luxurious even though its origins were entirely the opposite.</p><p>The rouille — a garlic-saffron mayonnaise spread on the toast — is one of the great condiments of the world. It is the element that visitors carry home and remember longest.</p>`,
+    ingredients: ['1.5kg mixed firm-fleshed fish (monkfish, sea bass, cod, or snapper), cut into chunks','500g mussels, scrubbed','3 ripe tomatoes, roughly chopped','1 fennel bulb, sliced','1 large onion, sliced','4 garlic cloves','Large pinch saffron threads','1 tsp pastis or Pernod (optional)','Olive oil, salt, pepper, orange peel','For rouille: 4 tbsp good mayonnaise, 2 garlic cloves (crushed), pinch saffron, pinch cayenne, 1 tbsp lemon juice'],
+    steps: ['Make rouille first: crush garlic to a paste. Bloom saffron in 1 tsp warm water. Mix both into mayonnaise with cayenne and lemon. Refrigerate.','In a wide, heavy pot, warm generous olive oil. Sauté fennel, onion, and garlic until completely soft and beginning to colour — about 15 minutes.','Add tomatoes, saffron, pastis, and a strip of orange peel. Cook 10 minutes until jammy.','Add 1.5L water or light fish stock. Bring to a boil. Season boldly — the broth is everything.','Add firmer fish first. After 5 minutes, add delicate fish and mussels. Cook until mussels open and fish is just done — about 8 minutes total.','Serve in two courses: ladle the golden broth into bowls over slices of toasted bread spread with rouille. Then serve the fish separately. Or combine — both are correct.'],
+    note: 'The quality of the saffron matters enormously here. Use real threads, not powder. Bloom them in warm water before adding.'
+  },
+  {
+    name: 'Wiener Schnitzel', country: 'Austria', flag: '🇦🇹', region: 'europe',
+    time: '30 mins', serves: 4, difficulty: 'Easy',
+    myth: 'Three steps: flour, egg, breadcrumb. The technique takes one pan and twenty minutes.',
+    history: `<p>Austria has protected the name "Wiener Schnitzel" by law since 2000 — it must be made from veal, not pork or chicken. The dish is closely related to the Italian <em>cotoletta alla Milanese</em>, and the historical debate over which came first has occupied food historians for generations. The most popular theory holds that Austrian Field Marshal Radetzky brought the recipe back from Milan in the 1840s, though earlier Austrian references exist.</p><p>Whatever its origin, Vienna made it definitive. The schnitzel became inseparable from Viennese identity and coffeehouse culture — a dish that transcends class, eaten in the grandest restaurants and at kitchen tables with equal sincerity.</p>`,
+    appeal: `<p>Thin, golden, crispy-breaded meat is one of the world's most universally beloved food experiences — Japan has its katsu, Germany has its schnitzel, Mexico has its milanesa. The Wiener Schnitzel is simply the archetype: the dish that every other culture's breaded cutlet traces itself back to, whether consciously or not.</p><p>It also represents a particular kind of elegant simplicity. There is nowhere to hide with a schnitzel — every element must be right. That combination of accessibility and demand for precision is part of its enduring appeal.</p>`,
+    ingredients: ['4 veal escalopes, about 150g each (or chicken breast, pounded thin)','Plain flour, seasoned with salt','2 large eggs, beaten with 1 tsp water','Fresh fine breadcrumbs (not panko — the texture matters)','Clarified butter or a mix of butter and neutral oil for frying','Lemon wedges and parsley to serve'],
+    steps: ['Place escalopes between plastic wrap and pound to 3–4mm thickness with a rolling pin or meat mallet. They should be very thin and even.','Set up your breading station: flour in one shallow dish, beaten egg in another, breadcrumbs in a third.','Season both sides of the meat. Dredge in flour, shaking off the excess. Dip in egg. Lay in breadcrumbs and lift — do not press. The breadcrumbs should sit loosely on the surface, not compacted.','Heat a generous amount of clarified butter in a large pan over medium-high heat. The butter should be about 3–4mm deep.','Lay schnitzel in hot butter. Shake the pan continuously so the butter moves over the surface. Cook 2–3 minutes per side until deep golden. The coating should puff and ruffle slightly.','Drain immediately on kitchen paper. Serve at once with lemon. Do not cover — steam collapses the coating.'],
+    note: 'The loose breadcrumb coating is essential — it creates the characteristic "soufflé" effect as it fries. Pressing it flat produces a dense, uniform crust, which is incorrect.'
+  },
+  {
+    name: 'Osso Buco', country: 'Italy', flag: '🇮🇹', region: 'europe',
+    time: '2.5 hrs', serves: 4, difficulty: 'Easy',
+    myth: 'If you can braise a chicken thigh, you can make this. The bone does the flavour work.',
+    history: `<p><em>Osso buco</em> means "bone with a hole" — a reference to the marrow-filled cavity at the centre of cross-cut veal shanks. It is a dish of Milan, first documented in the 19th century, and it is inseparable from the city's culinary identity in the way that few dishes are tied to single cities. Milanese restaurants treat it as a point of local pride.</p><p>Traditionally served with risotto alla Milanese, the two dishes complete each other: saffron-yellow risotto beneath braised bone-in veal, finished with gremolata — a raw condiment of lemon zest, garlic, and parsley that cuts through the richness with brightness. The gremolata is not optional.</p>`,
+    appeal: `<p>Braised meat falling from the bone, with a deeply reduced wine-and-tomato sauce and the prize of marrow inside the bone — this is food that appeals on a primal level across every culture that eats meat. The visual of the cross-cut shank, with its ring of bone and central marrow, is immediately dramatic.</p><p>The gremolata finishing is one of the great flavour techniques: adding raw brightness to a very rich braise. The principle — acidic freshness to cut richness — resonates with cooks from every tradition.</p>`,
+    ingredients: ['4 veal shanks, cross-cut about 4cm thick, tied with kitchen twine','Plain flour for dusting','200ml dry white wine','500ml chicken or veal stock','400g crushed tomatoes','1 onion, 1 carrot, 2 celery stalks — all finely diced (soffritto)','3 garlic cloves','Olive oil, salt, pepper','Gremolata: zest of 1 lemon, 2 garlic cloves (very finely minced), large handful flat-leaf parsley (finely chopped)'],
+    steps: ['Season shanks well and dust lightly with flour. Sear in a wide, heavy pot in olive oil over high heat until deeply golden on both sides — about 4 minutes per side. Remove.','In the same pot, sauté soffritto until soft and golden, about 10 minutes. Add garlic.','Add white wine. Let it bubble and reduce by half, scraping up all the fond from the bottom.','Add tomatoes and stock. Return shanks — liquid should come about halfway up the meat. Season.','Cover and braise at 160°C for 2–2.5 hours. The meat is done when it pulls easily from the bone and the marrow is soft.','Mix gremolata ingredients together. Remove twine from shanks. Serve with a spoonful of gremolata on each shank. Instruct your guests to scoop the marrow from the bone.'],
+    note: 'Do not skip the gremolata — it transforms the dish. Raw lemon zest and garlic over the braise cuts the richness in a way that nothing else does.'
+  },
+  {
+    name: 'Cacio e Pepe', country: 'Italy', flag: '🇮🇹', region: 'europe',
+    time: '20 mins', serves: 4, difficulty: 'Moderate',
+    myth: 'Three ingredients. The technique takes one attempt to understand and five minutes to master.',
+    history: `<p>Cacio e Pepe is one of Rome's four canonical pasta dishes — alongside Carbonara, Amatriciana, and Gricia — and it is the most ancient. Food historians trace its origins to Roman shepherds who drove flocks across long distances, carrying shelf-stable provisions: hard cheese, dried pasta, and black pepper. The dish they made from these provisions became a cornerstone of Roman cucina povera.</p><p>Its recent global explosion is in part a reaction against complicated food — a three-ingredient dish that tastes this extraordinary is a kind of culinary philosophy. It has become the dish that serious home cooks want to master precisely because its simplicity is deceptive.</p>`,
+    appeal: `<p>The appeal is the paradox: it looks like nothing — just pasta with cheese — and tastes like something you cannot explain to someone who hasn't had it. The combination of two hard Italian cheeses with aggressively ground black pepper creates a flavour profile that is simultaneously simple and complex.</p><p>The technique challenge — the emulsification of starchy pasta water and cheese into a silky sauce — has made it a culinary benchmark. Successfully making Cacio e Pepe feels like passing a test. That feeling of achievement resonates with cooks everywhere.</p>`,
+    ingredients: ['400g tonnarelli, thick spaghetti, or rigatoni','120g Pecorino Romano, very finely grated (microplane-fine)','50g Parmigiano Reggiano, very finely grated','2 tsp black pepper, very coarsely ground (not pre-ground)','Salt for pasta water'],
+    steps: ['Grate both cheeses finely — they must be powdery, not shredded. Mix together in a bowl.','Toast peppercorns in a large, dry pan over medium heat until fragrant. Crush them coarsely — you want texture, not powder. Leave in the pan.','Cook pasta in well-salted but less water than usual (to concentrate the starch). Reserve at least 400ml pasta water before draining.','Add a ladle of pasta water to the pepper pan. Swirl over heat to create a light peppery liquid. Add drained pasta and toss.','Remove pan from heat entirely. Add about 120ml warm pasta water to the cheese, stirring constantly to form a smooth paste — not lumps.','Add cheese paste to pasta off the heat. Toss vigorously and continuously, adding pasta water a little at a time, until the sauce is completely smooth and clings to every strand. Serve immediately.'],
+    note: 'The pan must be off the heat when you add the cheese — heat is the enemy. The starchy water is the emulsifier. Add it slowly and do not stop moving the pasta.'
+  },
+  {
+    name: 'Carbonara', country: 'Italy', flag: '🇮🇹', region: 'europe',
+    time: '20 mins', serves: 4, difficulty: 'Moderate',
+    myth: 'Eggs and cheese. The only rule is no heat when you add them — the residual warmth does the work.',
+    history: `<p>The precise origin of Carbonara is contested and fiercely argued. The leading theory points to post-WWII Rome, when American soldiers brought bacon and powdered eggs to the city, and these were combined with pasta in an improvised dish. The name may reference charcoal workers (<em>carbonari</em>) who made a similar dish. Romans today regard the American-origin story as a slight.</p><p>What is not contested is that authentic Carbonara contains no cream — the creaminess comes entirely from emulsified eggs, cheese, and pasta water. The cream version exists globally and is accepted in many countries; in Rome it is a source of genuine offense.</p>`,
+    appeal: `<p>The combination of cured pork, egg, hard cheese, and black pepper is one of the great flavour templates of the world — salty, rich, umami-dense, with the warmth of pepper. The sauce achieves an almost custard-like silkiness without dairy, which makes it feel like a magic trick the first time it works.</p><p>The no-cream rule has paradoxically increased its global appeal, not diminished it — the dish has become famous partly because of the debate. People want to make the "real" version. That aspiration drives interest across every culinary culture.</p>`,
+    ingredients: ['400g spaghetti or rigatoni','200g guanciale (cured pork cheek) — pancetta is an acceptable substitute','4 egg yolks and 1 whole egg','80g Pecorino Romano, finely grated','40g Parmigiano Reggiano, finely grated','Generous black pepper, coarsely ground','Salt for pasta water'],
+    steps: ['Cut guanciale into lardons or strips. Cook in a wide pan over medium heat in its own fat until the fat is rendered and the meat is crisp but not hard. Remove from heat. Reserve the rendered fat in the pan.','Beat egg yolks and the whole egg together with the grated cheeses and a very generous amount of black pepper. Mix until smooth.','Cook pasta in well-salted water. Reserve 200ml pasta water. Drain pasta — do not rinse.','Add hot pasta to the pan with guanciale (off the heat). Toss well so the pasta absorbs the fat.','Add egg and cheese mixture. Toss continuously and vigorously. Add pasta water a splash at a time, tossing the whole time, until the sauce is creamy and clings to the pasta rather than pooling.','Serve immediately. The sauce should be silky — if it has scrambled, the pan was too hot.'],
+    note: 'The most common mistake is adding the eggs to a hot pan. Remove the pan from heat before adding the egg mixture. The residual warmth of the pasta is sufficient to cook them.'
+  },
+  {
+    name: 'Risotto alla Milanese', country: 'Italy', flag: '🇮🇹', region: 'europe',
+    time: '35 mins', serves: 4, difficulty: 'Moderate',
+    myth: 'Attention beats stirring. It needs 18 minutes of engagement, not constant agitation.',
+    history: `<p>The legend of risotto alla Milanese dates to 1574, during the construction of the Duomo di Milano, when a master glassmaker allegedly used saffron (used to colour glass) in a wedding dish as a prank, producing a golden rice that so astonished guests it became the city's signature preparation. The story is probably apocryphal but has endured because it perfectly captures the dish: accidental, golden, and completely Milanese.</p><p>Saffron risotto is the traditional accompaniment to Osso Buco — the two dishes are considered inseparable in Milanese cooking. Together they represent the city's culinary identity as definitively as any pairing in Italian regional cooking.</p>`,
+    appeal: `<p>Golden-yellow, creamy, and perfumed with the world's most expensive spice — risotto alla Milanese has a visual and aromatic drama that translates across cultures. The technique of slowly drawing starch from the rice to create its own creamy sauce (without cream) is one of Italian cooking's great innovations.</p><p>The <em>mantecatura</em> — the final beating of cold butter into the rice off the heat — is a technique that produces a texture unlike anything else. When a risotto flows from the spoon like lava, that moment is viscerally satisfying in a way that crosses all cultural contexts.</p>`,
+    ingredients: ['320g Carnaroli rice (Arborio is acceptable; Carnaroli holds better)','1L good chicken stock, kept hot','1 small white onion, very finely diced','150ml dry white wine','Large pinch saffron threads, bloomed in 2 tbsp warm water','80g unsalted cold butter, cubed','80g Parmigiano Reggiano, finely grated','Olive oil, salt, white pepper'],
+    steps: ['Heat stock in a separate pan and keep at a gentle simmer throughout. Cold stock added to risotto drops the temperature and disrupts the starch release.','Sauté onion in 1 tbsp olive oil and a small knob of butter until completely soft and translucent — 8–10 minutes. Do not colour.','Add dry rice. Toast for 2 minutes, stirring, until the grains look slightly translucent at the edges.','Add white wine. Stir until completely absorbed.','Begin adding hot stock, one ladle at a time, stirring gently but regularly after each addition. Let each ladle absorb before adding the next. This takes approximately 16–18 minutes.','Add bloomed saffron and its liquid with the second-to-last ladle of stock.','Remove from heat. Add cold butter cubes and Parmigiano. Beat vigorously (mantecatura) for 90 seconds until creamy and slightly loose — it should flow, not sit stiffly. Rest 2 minutes. Serve immediately.'],
+    note: 'The risotto should "wave" (all\'onda) when you shake the plate — a loose, flowing consistency. If it is stiff, add more hot stock. It will firm up faster than you expect.'
+  },
+  {
+    name: 'Paella Valenciana', country: 'Spain', flag: '🇪🇸', region: 'europe',
+    time: '1 hr', serves: 6, difficulty: 'Moderate',
+    myth: 'Do not stir it. That is literally the hardest part. Everything else is patience.',
+    history: `<p>Paella originated in Valencia in the mid-19th century, cooked by farm workers over open fires for their midday meal, using whatever was available: rabbit, chicken, snails, and flat green beans. The dish takes its name from the wide, flat pan in which it is cooked — not from any ingredient. The word <em>paella</em> is simply the Valencian word for pan, derived from the Latin <em>patella</em>.</p><p>The Valencian claim on paella is passionate and well-founded. The addition of seafood — now the globally dominant version — is considered a bastardisation in Valencia. The Valencian Paella World Championship requires the traditional combination: chicken, rabbit, and vegetables only.</p>`,
+    appeal: `<p>A dramatic single-pan dish cooked at the table or outdoors over fire, with its golden saffron-stained rice and its social aspect of being shared directly from the pan — paella has a theatrical quality that travels well across cultures. The <em>socarrat</em>, the caramelised crust of rice at the bottom, has become one of the most celebrated textures in any cooking tradition.</p><p>The story of its origin — a farmworker's improvised meal cooked at midday — is also universally relatable. The finest food begins with available ingredients and necessity, not aspiration.</p>`,
+    ingredients: ['500g bomba or calasparra rice (short-grain, high-starch)','1 chicken, jointed into 8 pieces','500g rabbit, jointed (or replace with additional chicken)','200g flat green beans, trimmed','200g butter beans or white beans (canned, drained)','2 ripe tomatoes, halved and grated','1 tsp sweet smoked paprika','Large pinch saffron threads','1 sprig fresh rosemary','1.5L hot chicken stock','Generous olive oil, salt'],
+    steps: ['Heat generous olive oil in a paella pan over high heat. Season chicken and rabbit. Brown all over until deep golden — do not rush this. Set aside.','In the same oil, cook green beans until slightly coloured. Push to the edges. Add grated tomato to the centre and cook, stirring, until darkened and almost dry — about 5 minutes.','Add paprika and stir immediately (it burns in seconds). Add stock. Return the meat. Bring to a strong boil. Season assertively.','Add saffron and rosemary. Add rice in an even cross pattern and spread it flat. Do not stir again from this moment.','Cook on high heat for 8 minutes, then reduce to medium-low for a further 10–12 minutes until the rice has absorbed the liquid. If the liquid vanishes before the rice is done, add a small splash of hot water around the edges.','In the final 2 minutes, increase heat to develop the socarrat — the caramelised bottom crust. You will hear a gentle crackling. Remove from heat, cover loosely with foil, and rest 5 minutes.'],
+    note: 'The socarrat is the prize. To check it, slide a spatula down the edge — you want the bottom layer of rice to be golden and slightly crusty, not burnt. Listen for the crackling.'
+  },
+  {
+    name: 'Beef Wellington', country: 'United Kingdom', flag: '🇬🇧', region: 'europe',
+    time: '2 hrs', serves: 6, difficulty: 'Moderate',
+    myth: 'Prep three components, assemble, bake. It is a project but not a mystery.',
+    history: `<p>The Beef Wellington — beef tenderloin wrapped in duxelles and baked in puff pastry — is claimed to have been named after Arthur Wellesley, the Duke of Wellington, hero of Waterloo. The connection is tenuous at best, and food historians have been unable to find any recipe by that name before the 20th century. It may simply be a dish that sounded sufficiently grand to deserve a great name.</p><p>Whatever its origins, it became the centrepiece of British celebratory cooking and was subsequently codified globally through Gordon Ramsay, whose perfect Wellington became a benchmark dish in competitive cookery and home aspirational cooking alike.</p>`,
+    appeal: `<p>A whole beef tenderloin, encased in mushroom duxelles and prosciutto, wrapped in golden puff pastry — the Wellington is pure drama. The reveal when it is sliced at the table is one of cooking's great theatrical moments. The concentric rings of pastry, mushroom, and pink beef have a visual clarity that photographs perfectly and impresses immediately.</p><p>It also represents something universal: the idea of a precious thing protected and transformed. The pastry shell preserves and perfumes the beef as it cooks. The concept of encasing precious food in dough for baking appears in dozens of culinary traditions around the world.</p>`,
+    ingredients: ['1kg beef tenderloin (centre-cut, trimmed)','500g chestnut mushrooms, very finely chopped (duxelles)','6–8 slices prosciutto di Parma','1 sheet all-butter puff pastry','2 tbsp Dijon mustard','2 egg yolks, beaten (egg wash)','Olive oil, butter, salt, black pepper'],
+    steps: ['Season beef all over with salt and pepper. Sear in a very hot pan with oil until deeply browned on all sides — including the ends. This takes about 6 minutes. Allow to cool completely, then brush all over with Dijon mustard. Refrigerate.','Cook mushrooms in butter over high heat, stirring, until all moisture has evaporated and they are completely dry — this takes 15–20 minutes. Season. Cool completely.','Lay prosciutto slices on cling film, overlapping into a rectangle large enough to wrap the beef. Spread a thin, even layer of duxelles over the prosciutto.','Place cold beef at the front edge. Roll tightly using the cling film to form a cylinder. Twist the ends and refrigerate for at least 30 minutes.','Unwrap beef roll. Place on puff pastry, roll to encase, and seal with egg wash. Trim excess. Brush the exterior with egg wash. Score lightly. Refrigerate 15 minutes.','Bake at 220°C for 22–26 minutes for medium-rare (internal temperature 52°C). Rest 10 minutes before slicing — do not skip the resting.'],
+    note: 'Use a meat thermometer. There is no reliable visual guide for doneness inside a pastry shell. Pull it from the oven at 52°C and it will reach 55°C during resting — a perfect medium-rare.'
+  },
+  {
+    name: 'Moussaka', country: 'Greece', flag: '🇬🇷', region: 'europe',
+    time: '2 hrs', serves: 8, difficulty: 'Moderate',
+    myth: 'Three layers, a béchamel, and some patience. The oven handles the hard part.',
+    history: `<p>Moussaka appears across the Eastern Mediterranean and Middle East in many forms — the word is Arabic in origin, referring to a dish of layered vegetables. The Greek version that the world knows — layered eggplant, spiced ground lamb, and béchamel — was substantially codified by the Greek chef Nikolaos Tselementes in the 1920s, who added the béchamel topping, a French technique he had studied in France. The dish as most people know it is therefore a 20th-century invention built on much older foundations.</p><p>It became the definitive expression of Greek home cooking in part because it requires planning and time — qualities that mark a dish as something made with care rather than convenience.</p>`,
+    appeal: `<p>Layered baked dishes — <em>lasagne</em>, <em>pastitsio</em>, <em>shepherd's pie</em> — appear in virtually every cooking culture in the world. Moussaka belongs to this universal family while being distinctly Greek through its spicing: cinnamon, allspice, and nutmeg in meat sauce, which gives it a warmth unlike any Western equivalent.</p><p>The combination of sweet eggplant, deeply spiced lamb, and creamy béchamel is one of the great textural and flavour trilogies in Mediterranean cooking. The cinnamon in particular — in meat, not in dessert — is the element that surprises and converts people.</p>`,
+    ingredients: ['2 large eggplants, sliced 1cm thick','500g ground lamb (or beef)','1 large onion, finely diced','3 garlic cloves','400g crushed tomatoes','100ml red wine','1 tsp cinnamon, 1 tsp allspice, pinch nutmeg','Olive oil, salt, pepper','Béchamel: 80g butter, 80g plain flour, 750ml whole milk, 2 eggs (beaten), nutmeg, 50g grated Parmigiano or Kefalotiri'],
+    steps: ['Salt eggplant slices and let stand 20 minutes. Rinse, pat dry. Brush with olive oil and roast at 200°C for 20–25 minutes until golden and collapsed. Reserve.','Sauté onion until soft. Add garlic, then lamb — break up and brown well. Add wine, let it evaporate. Add tomatoes, cinnamon, allspice, nutmeg. Simmer 20 minutes until thick. Season well.','Make béchamel: melt butter, add flour and stir 2 minutes. Add warm milk gradually, whisking constantly until thick and smooth. Season with salt and nutmeg. Remove from heat and beat in eggs.','In a large baking dish, layer: eggplant slices → all the meat sauce → eggplant slices → all the béchamel. Smooth the surface. Top with grated cheese.','Bake at 180°C for 45 minutes until the top is deep golden and set.','Rest for at least 20 minutes before serving — it firms as it cools and cuts into proper portions. Moussaka is not meant to be eaten piping hot.'],
+    note: 'Moussaka genuinely improves after 24 hours in the refrigerator. It is traditionally made the day before it is needed and reheated in the oven.'
+  },
+  {
+    name: 'Goulash', country: 'Hungary', flag: '🇭🇺', region: 'europe',
+    time: '2.5 hrs', serves: 6, difficulty: 'Easy',
+    myth: 'Onions, paprika, beef, time. The only technique is patience with the onion base.',
+    history: `<p>Goulash began as a cattle herders' dish on the Hungarian plains — the word <em>gulyás</em> originally referred to the herdsmen themselves, not the food. They dried beef and onions into portable provisions and reconstituted them on the road. The introduction of paprika to Hungary from the Americas, arriving via Ottoman trade routes in the 16th century, transformed the dish from simple meat stew to something distinctively Hungarian.</p><p>During the Austro-Hungarian Empire, goulash spread across Central Europe and became a symbol of Hungarian national identity, particularly during the independence movements of the 19th century. To eat goulash was, in a sense, to declare something about who you were.</p>`,
+    appeal: `<p>A deeply paprika-flavoured beef stew with the gentle heat of caraway seeds has a spice profile that feels exotic without being challenging. Paprika is one of the world's most accessible flavour pivots — warm, slightly sweet, and deeply savoury — and Hungarian goulash is its greatest expression.</p><p>The dish also travels well because it is unambiguously a stew, and stew is universal. Every cooking culture has a version of slow-cooked meat in liquid. What makes goulash memorable is the colour and depth that proper paprika — not the dusty powder in old spice racks — brings to something familiar.</p>`,
+    ingredients: ['1kg beef chuck, cut into large cubes','3 large onions, very finely sliced','3 tbsp sweet Hungarian paprika (good quality is everything)','1 tsp hot paprika or chili flakes','1 tsp caraway seeds','2 garlic cloves, minced','400g crushed tomatoes','2 red or yellow peppers, diced','2 medium potatoes, cubed','500ml beef stock','Lard or neutral oil, salt','Sour cream and egg noodles or bread to serve'],
+    steps: ['Heat lard in a heavy pot. Add all the onions and cook over medium-low heat, stirring occasionally, for 20–25 minutes until very soft, golden, and deeply caramelised. Do not rush this step — it is the soul of the dish.','Remove pot from heat. Add paprika and caraway seeds. Stir quickly — paprika burns instantly in fat and turns bitter. The residual heat is enough.','Return to medium heat. Add beef and garlic. Stir to coat the meat in the paprika-onion mixture. Cook for 5 minutes.','Add tomatoes, peppers, and stock. Stir. Cover and simmer on very low heat for 1.5 hours until beef is very tender.','Add potatoes for the final 30 minutes.','Check seasoning. Serve with a spoonful of sour cream on top. Egg noodles or bread alongside.'],
+    note: 'The paprika you use matters more than any other ingredient. Old, stale paprika has no flavour. Buy a new tin from a Hungarian or European deli if possible.'
+  },
+  {
+    name: 'Khachapuri', country: 'Georgia', flag: '🇬🇪', region: 'europe',
+    time: '2 hrs', serves: 4, difficulty: 'Easy',
+    myth: 'If you have made pizza dough, you are already halfway there.',
+    history: `<p>Khachapuri — literally "cheese bread" — is one of the most ancient and beloved foods in Georgian culture, and every region of the country has its own version. The Adjarian version, from the Black Sea coast, is the most visually dramatic: a boat-shaped pastry filled with molten cheese, topped with an egg and a generous pat of butter added at the table. It is a dish built for communal warmth.</p><p>In Georgia, khachapuri is so central to daily life that economists have used it to construct the "Khachapuri Index" — a measure of inflation tracking the real cost of making the dish. It costs between 10% and 40% of the average Georgian's daily wage, making it both everyday food and an economic barometer.</p>`,
+    appeal: `<p>A boat of golden bread overflowing with molten cheese, with a runny egg yolk sitting at its centre and a curl of melting butter — this is food that generates a visceral, immediate response. The visual is irresistible across cultures. The act of tearing the crust and dipping it into the cheese and egg mixture is deeply satisfying and interactive.</p><p>Cheese and bread together, in various forms, appears in almost every cooking culture. Khachapuri elevates the combination to something theatrical while remaining wholly accessible. The Georgian technique of using a slightly tangy cheese mix creates a depth that sets it apart from simpler cheese breads.</p>`,
+    ingredients: ['500g strong white bread flour','7g instant yeast','280ml warm water','1 tsp salt, 1 tsp sugar, 2 tbsp neutral oil','For filling: 300g mozzarella (grated), 150g feta (crumbled) — together these approximate the traditional Sulguni','4 eggs (one per portion)','4 generous knobs of unsalted butter'],
+    steps: ['Combine flour, yeast, salt, and sugar in a bowl. Add warm water and oil. Mix then knead for 10 minutes until smooth and elastic. Cover and prove in a warm place for 1 hour.','Mix mozzarella and feta together. The feta adds the necessary tang; the mozzarella provides the melt.','Divide dough into 4 equal pieces. Roll each into an oval roughly 25cm long. Pinch and twist the two ends firmly to create the characteristic boat shape.','Place on lined baking trays. Fill each boat generously with cheese mixture — it should be piled high.','Bake at 230°C for 12–14 minutes until the edges are deep golden and the cheese is bubbling.','Remove from oven. Make a well in the centre of the molten cheese with a spoon. Crack an egg into each well. Return to oven for 3–4 minutes — the white should just set, the yolk still liquid. Add a knob of butter immediately and serve.'],
+    note: 'Eat immediately. Khachapuri waits for no one. The technique: tear strips of crust, stir the egg and butter into the cheese, and dip.'
+  },
+  {
+    name: 'Borscht', country: 'Ukraine', flag: '🇺🇦', region: 'europe',
+    time: '1.5 hrs', serves: 6, difficulty: 'Easy',
+    myth: 'Beet soup. Very forgiving, very nourishing. The colour does all the dramatic work for you.',
+    history: `<p>Borscht is one of the most politically charged soups in the world. Ukraine claims it as a national dish with deep cultural roots — the word appears in Ukrainian texts from the 16th century — but Russia has historically included borscht in its own culinary canon. UNESCO inscribed Ukrainian borscht-making culture on its Intangible Cultural Heritage list in 2022, partly in response to Russian appropriation of the dish during the ongoing war.</p><p>The early versions of borscht were made with cow parsnip (a plant called <em>borschevik</em>), not beets. The beet version emerged in Ukraine in the 17th century and became the dominant form as beets became widespread across Eastern Europe. Every family has its own recipe — the ingredients vary by season, region, and what the garden produced.</p>`,
+    appeal: `<p>The colour alone — a deep, shocking magenta — makes borscht unforgettable. Nothing else in the soup world looks like it. The flavour follows the visual logic: earthy from beets, slightly sour from vinegar, rich from beef, and completed by a cold spoonful of sour cream that creates a swirl of pink and white.</p><p>It is a soup that rewards curiosity. People who approach it hesitantly — "beet soup?" — are almost always converted on the first spoonful. The depth of a long-cooked beef borscht, with its balance of sweet and sour, is unlike anything in Western soup tradition.</p>`,
+    ingredients: ['500g beef brisket or short ribs','3 large beets, peeled and coarsely grated','300g white cabbage, finely shredded','3 medium potatoes, cubed','2 carrots, grated','2 onions, finely diced','3 garlic cloves, minced','400g crushed tomatoes or 3 tbsp tomato paste','2 tbsp red wine vinegar (adjust to taste)','1 tsp sugar','Dill, fresh or dried','Sour cream and dark bread to serve'],
+    steps: ['Place beef in a large pot, cover with cold water, bring to a boil. Skim off the grey foam carefully. Add one onion (halved), a carrot, and bay leaves. Simmer partially covered for 1.5 hours until tender. Remove beef, slice. Reserve all the stock.','In a large pan, sauté remaining onion and carrot in oil until soft. Add raw grated beets. Cook together 15 minutes, stirring, until beets are slightly softened. Add tomatoes or paste. Cook another 10 minutes.','Add this beet mixture to the hot beef stock. Add potatoes and cabbage. Simmer 20 minutes until both are tender.','Add vinegar, garlic, and sugar. Taste — the balance should be slightly sour and slightly sweet. Adjust.','Return sliced beef to the pot. Simmer together 10 minutes. Check seasoning.','Serve with a generous spoonful of sour cream and fresh dill. Dark rye bread on the side is not optional.'],
+    note: 'Add the vinegar at the end, not the beginning — acids added early can prevent beets from fully softening. The vinegar also preserves the vibrant colour.'
+  },
+
+  // ── EAST & SE ASIA ──
+  {
+    name: 'Pho', country: 'Vietnam', flag: '🇻🇳', region: 'east_asia',
+    time: '5 hrs (hands-off)', serves: 6, difficulty: 'Easy',
+    myth: 'The bones do the work while you ignore them. Active cooking time is under 30 minutes.',
+    history: `<p>Pho is northern Vietnamese in origin, emerging in the early 20th century around Hanoi and the Nam Dinh province. Its exact origins are debated — French influence (pot-au-feu as a possible ancestor), Chinese noodle traditions from Cantonese migrants, and indigenous Vietnamese flavour instincts all contributed. The charring of onion and ginger, the particular blend of star anise, cinnamon, and clove, the use of rice noodles — these coalesced into something entirely original.</p><p>After 1954, southern Vietnamese refugees brought pho to Saigon, where it absorbed a more generous, herb-laden, condiment-heavy form. The two regional versions — northern (subtle, pure broth) and southern (abundant, personalised) — remain distinct today.</p>`,
+    appeal: `<p>Pho's global appeal rests in large part on the ritual of assembly. The steaming bowl of clear, spiced broth arrives at the table and the diner adds: bean sprouts, Thai basil, lime, hoisin, sriracha. The act of customising the bowl is both personal and communal — you are making the dish your own while participating in a shared tradition.</p><p>The broth itself — deeply savoury, faintly sweet from charred onion, warmly spiced with star anise — achieves a depth that most Western soups cannot match without cream or starch. The clarity of a properly made pho broth is a revelation: so flavourful, so light.</p>`,
+    ingredients: ['2kg beef bones (marrow bones and knuckles)','500g beef brisket','1 large onion, halved','One 8cm chunk of fresh ginger, halved','3 star anise','2 cinnamon sticks','4 cloves, 4 cardamom pods, 1 tsp coriander seeds','Fish sauce and rock sugar to season','For serving: flat rice noodles, thinly sliced raw beef (eye round), bean sprouts, Thai basil, mint, lime, hoisin, sriracha, sliced chili'],
+    steps: ['Blanch bones: place in cold water, bring to a boil, cook 10 minutes. Drain and rinse bones and pot thoroughly. This removes impurities and produces a clear broth.','Char onion and ginger directly over a gas flame or under a broiler until blackened in places — about 5 minutes. This is not optional: the charred aromatics give pho its characteristic sweet depth.','Toast whole spices in a dry pan until fragrant, 2 minutes. Place in a piece of muslin or cheesecloth, tied closed.','Return cleaned bones and brisket to pot. Cover with cold water (about 4L). Add charred aromatics and spice sachet. Bring to a gentle simmer — never a rolling boil, which clouds the broth. Simmer 4–5 hours, skimming occasionally.','After 1.5 hours, remove brisket when just cooked. Slice when cool. Continue simmering bones.','Strain broth. Season with fish sauce (start with 4 tbsp) and rock sugar — the balance should be savoury with a gentle sweetness. Keep hot.','To serve: cook noodles, place in bowls with sliced brisket. Lay thin raw beef slices over the top — the boiling broth you ladle over will cook them in the bowl. Serve immediately with all the garnishes.'],
+    note: 'The broth must never fully boil — keep it at a contented simmer. A rolling boil creates a cloudy, greasy stock. Slow and low produces the clear, jewel-like broth that defines pho.'
+  },
+  {
+    name: 'Pad Thai', country: 'Thailand', flag: '🇹🇭', region: 'east_asia',
+    time: '30 mins', serves: 4, difficulty: 'Easy',
+    myth: 'Master the three-ingredient sauce and the rest is simple assembly on high heat.',
+    history: `<p>Pad Thai's origins are remarkably recent and deliberately political. In the 1930s and 40s, the Thai government under Prime Minister Plaek Phibunsongkhram launched a campaign to create a unified national dish as part of a nation-building exercise, simultaneously encouraging rice noodles over rice to stretch food supplies. The dish that emerged — stir-fried rice noodles with tamarind, fish sauce, egg, and peanuts — was promoted nationally and became, within a generation, Thailand's most globally recognised food.</p><p>It is one of the few dishes in the world whose national origin is explicitly the result of government policy. That it became genuinely delicious and genuinely beloved makes the story even more remarkable.</p>`,
+    appeal: `<p>Pad Thai's global spread is one of the great culinary success stories of the 20th century. The Thai government actively promoted it internationally through Thai restaurants abroad, and the dish's sweet-sour-salty-umami balance is almost perfectly calibrated for broad appeal. There are few palates that Pad Thai fails to reach.</p><p>The peanut-tamarind-fish sauce sauce base is both familiar and exotic — peanuts and something tangy and salty are components that appear in many global cuisines, but the specific combination is uniquely Thai. It rewards those trying to replicate it and reveals its depth slowly.</p>`,
+    ingredients: ['250g flat rice noodles (3–5mm wide), soaked in cold water 30 minutes — not boiled','300g shrimp, chicken, or firm tofu','3 large eggs','100g bean sprouts','4 spring onions, cut into 3cm lengths','3 tbsp tamarind paste (or 2 tbsp tamarind concentrate)','2.5 tbsp fish sauce','1.5 tbsp palm sugar or light brown sugar','2 garlic cloves, minced','2 tbsp dried shrimp (optional but adds depth)','Neutral oil, ground roasted peanuts, lime, dried chili flakes to serve'],
+    steps: ['Mix tamarind, fish sauce, and sugar together. Taste: it should be sour, salty, and slightly sweet in that order. Adjust to balance. This sauce is everything.','Heat a wok until smoking. Add oil. If using chicken, cook first until done; add shrimp near the end. Remove and set aside.','In the same wok, add garlic, then drained noodles. Toss and stir — they may stick initially. Add the sauce and toss until noodles absorb it and begin to colour slightly.','Push noodles to one side. Crack eggs into the empty side and scramble briefly, then fold into the noodles before fully set.','Return protein to wok. Add dried shrimp and half the spring onions. Toss everything together on high heat.','Serve immediately. Top with crushed peanuts, remaining spring onions, bean sprouts alongside. Serve with chili flakes, extra lime, and fish sauce at the table for individual adjustment.'],
+    note: 'Cook in batches if making for more than 2–3 people. A crowded wok steams rather than fries, and you lose the essential caramelisation that gives the dish its depth.'
+  },
+  {
+    name: 'Tom Yum', country: 'Thailand', flag: '🇹🇭', region: 'east_asia',
+    time: '25 mins', serves: 4, difficulty: 'Easy',
+    myth: 'Five aromatics, twenty minutes, and a balance of hot, sour, and salty. Genuinely simple.',
+    history: `<p>Tom Yum — whose name translates roughly as "boiled galangal" or more poetically as the technique of boiling aromatic ingredients — is one of the defining dishes of Thai cuisine and one of Thailand's most globally exported flavours. The essential flavour combination of lemongrass, galangal, kaffir lime leaf, fish sauce, and lime juice appears across the country in regional variations.</p><p>Tom Yum Goong (with prawns) became the internationally dominant version. It gained particular global visibility during the 1997 Asian Financial Crisis, when the Thai baht's collapse was nicknamed the "Tom Yum crisis" by foreign media — a strange legacy for a soup to carry, but one that speaks to how deeply identified the dish is with Thailand itself.</p>`,
+    appeal: `<p>The hot-sour profile of Tom Yum is one of the most distinctive and addictive flavour experiences in global cooking. The aromatics — lemongrass, galangal, kaffir lime — are profoundly fragrant in a way that has no equivalent in Western cooking. The first bowl of Tom Yum tends to be a flavour revelation.</p><p>It is also one of the most visually beautiful soups in the world: a clear, amber broth swimming with mushrooms and prawns, with the green of kaffir lime and chili visible through the surface. The aromatic stems and leaves remain in the bowl not to be eaten, but to perfume every spoonful.</p>`,
+    ingredients: ['1L good chicken stock or water with a little fish stock','3 stalks lemongrass, bruised and cut into 5cm lengths','5–6 slices fresh galangal','4 kaffir lime leaves, torn','2–3 bird\'s eye chilis, bruised (adjust to heat preference)','1 tbsp roasted chili paste (nam prik pao) — available in jars','3 tbsp fish sauce','3 tbsp fresh lime juice','1 tsp palm sugar or brown sugar','200g shrimp, peeled (or chicken, or mixed mushrooms for vegetarian)','150g mushrooms (oyster or straw mushrooms are traditional)','Fresh cilantro to serve'],
+    steps: ['Bring stock to a boil. Add lemongrass, galangal, and kaffir lime leaves. Simmer 5 minutes to infuse.','Add chili paste, fish sauce, and sugar. Stir to dissolve. Taste — the broth should be hot, sour, and savoury. Begin adjusting now.','Add mushrooms. Simmer 3 minutes.','Add shrimp (or chicken). Cook 3–4 minutes until just done. Do not overcook.','Remove from heat. Add lime juice. Taste and adjust: more fish sauce for salt, more lime for sour, more sugar to balance.','Add bruised chilis. Ladle into bowls. Garnish with cilantro. The lemongrass, galangal, and kaffir lime are left in the bowl for fragrance — inform your guests not to eat them.'],
+    note: 'Add the lime juice at the end, off the heat. Boiling lime juice loses its brightness and produces a bitter note. Fresh lime at the last moment is essential.'
+  },
+  {
+    name: 'Massaman Curry', country: 'Thailand', flag: '🇹🇭', region: 'east_asia',
+    time: '2.5 hrs', serves: 6, difficulty: 'Easy',
+    myth: 'The paste and coconut milk do the heavy lifting. You provide time and patience.',
+    history: `<p>Massaman Curry is Thai cooking's most eloquent evidence of the spice trade. Its name derives from "Mussulman" (an archaic term for Muslim), and its flavour profile — incorporating cardamom, cinnamon, star anise, and nutmeg alongside coconut milk and peanuts — reflects Persian and Indian Muslim influence arriving through the maritime trade routes of the 17th century into the Ayutthaya court.</p><p>It is the southernmost and most internationally influenced of the Thai curries, associated with Thailand's Muslim south and with festive and celebratory meals. In 2011, CNN Travel rated it the world's most delicious food — a designation that generated enormous international attention and is now printed on menus across Thailand.</p>`,
+    appeal: `<p>Among the Thai curry family, Massaman is the most accessible to palates unfamiliar with Thai food. It is mild, sweet-savoury, and richly fragrant rather than incendiary. The combination of tender beef, soft potato, and crunchy peanuts in a coconut sauce flavoured with Persian-style spices is a genuinely original combination that belongs to no single tradition.</p><p>Its warmth — more aromatic than spicy — and its long, gentle cooking time make it the kind of dish that fills a home with a smell that makes people stop what they are doing and pay attention.</p>`,
+    ingredients: ['1kg beef chuck or lamb shoulder, cut into large cubes','2 cans (800ml) good coconut milk — use full-fat','2–3 tbsp Massaman curry paste (good jarred paste works well here)','400g waxy potatoes, quartered','100g roasted peanuts','2 tbsp tamarind paste','1 tbsp palm sugar or brown sugar','3 tbsp fish sauce','2 cinnamon sticks, 4 cardamom pods, 2 star anise (whole)','1 medium onion, cut into large pieces'],
+    steps: ['Heat a dry, heavy pot. Add Massaman paste and fry, stirring, for 2 minutes until fragrant and beginning to darken.','Add the thick cream from the top of the coconut cans (shake first, then open and pour off the thick portion). Stir together with paste over medium heat until the oil begins to separate from the coconut — about 5 minutes.','Add beef. Stir to coat thoroughly.','Add remaining coconut milk, whole spices, onion, tamarind, sugar, and fish sauce. Add enough water so the beef is just submerged.','Simmer on low heat, covered, for 1.5–2 hours until beef is very tender.','Add potatoes for the final 30 minutes. Adjust seasoning — it should be rich, gently sour, slightly sweet, and deeply fragrant. Finish with peanuts. Serve with jasmine rice.'],
+    note: 'A good jarred Massaman paste is a genuine time saver and produces excellent results. Brands from Asian supermarkets (particularly Thai brands) are preferred over supermarket own-brands.'
+  },
+  {
+    name: 'Rendang', country: 'Indonesia', flag: '🇮🇩', region: 'east_asia',
+    time: '3–4 hrs', serves: 6, difficulty: 'Easy',
+    myth: 'Patience is the only skill required. You make the paste, add the beef, and wait.',
+    history: `<p>Rendang originates with the Minangkabau people of West Sumatra and is one of the world's oldest continuously made dishes — references to it appear in Malay literature as far back as the 16th century. It was originally made for long journeys and celebratory feasts: the extended cooking in coconut milk, which evaporates and then fries the beef in its own oils, acts as a preservative. A properly made rendang can last for weeks at room temperature.</p><p>It is now the national dish of both Indonesia and Malaysia (a source of some diplomatic tension), served at weddings, Eid celebrations, and festivals. It has been voted the world's most delicious food multiple times in international polls, which has given it a global profile far exceeding the reach of Indonesian cuisine generally.</p>`,
+    appeal: `<p>The flavour of rendang — dark, complex, simultaneously spicy and sweet, with a texture that moves from tender beef to crisp caramelised exterior — is unlike any other braised meat dish in the world. The transition from wet curry to dry-fried stew over the course of the cooking is visually dramatic and texturally thrilling.</p><p>The toasted coconut (kerisik), which is added late in the cook, is the element that makes rendang singular: it absorbs into the sauce and adds a roasted, nutty depth that no other curry achieves. When it is done — deep mahogany, almost dry, clinging to the beef — the smell alone is extraordinary.</p>`,
+    ingredients: ['1kg beef chuck, cut into large cubes (larger than you think — they shrink)','2 cans (800ml) full-fat coconut milk','4 stalks lemongrass, bruised','4 kaffir lime leaves','100g desiccated coconut, toasted dry in a pan until golden (kerisik)','Spice paste: 10 dried red chilies (soaked in hot water 20 mins), 6 shallots, 5 garlic cloves, 3cm fresh galangal, 3cm fresh ginger, 2 tsp ground coriander, 1 tsp turmeric'],
+    steps: ['Blend all spice paste ingredients together with a little water until smooth. This is your rendang engine.','Heat oil in a wide, heavy pot. Fry paste over medium heat, stirring continuously, for 8–10 minutes until it darkens, loses its raw smell, and oil begins to pool around it.','Add beef. Stir to coat thoroughly with paste.','Add coconut milk, lemongrass, and kaffir lime leaves. Bring to a simmer. Cook uncovered over medium heat.','Stir every 15–20 minutes. After about 2 hours, the liquid will have reduced significantly and you will need to stir more frequently to prevent sticking.','Add toasted coconut. Continue cooking — the mixture will now transition from wet to dry-fried as the coconut oil releases. Stir more frequently in this stage.','After 3–4 hours total, the rendang is done when it is very dark, almost dry, the oil has separated and the beef is coated in a dark, aromatic crust. Taste and adjust salt.'],
+    note: 'Do not rush this. The multi-hour cook is not a recipe imperfection — it is the recipe. The transformation from pale curry to dark, dry-fried rendang is the dish.'
+  },
+  {
+    name: 'Nasi Goreng', country: 'Indonesia', flag: '🇮🇩', region: 'east_asia',
+    time: '20 mins', serves: 4, difficulty: 'Easy',
+    myth: 'Day-old rice and a very hot pan. The rest is flavour building in under twenty minutes.',
+    history: `<p>Nasi goreng — "fried rice" in Indonesian and Malay — is Indonesia's most widely eaten dish and arguably the most beloved single food across all of Southeast Asia. The technique of frying leftover cooked rice in a hot pan is ancient, driven by the practical need to use rice that had hardened overnight. The Indonesian version distinguishes itself through kecap manis (sweet soy sauce) and shrimp paste (terasi), which give it a depth and sweetness unlike any other fried rice tradition.</p><p>It was introduced to international audiences partly through the Dutch colonial presence in Indonesia — many Dutch-Indonesian families made nasi goreng part of their home cooking, spreading it into European kitchens before any other Southeast Asian dish had achieved similar reach.</p>`,
+    appeal: `<p>Fried rice appears in every culture that eats rice — Chinese, Japanese, Indian, Korean, Caribbean. Nasi goreng stands apart from all of them through the specific power of kecap manis: an aged, molasses-dark sweet soy sauce that caramelises around the rice in the wok, coating every grain with a lacquered, smoky sweetness.</p><p>The combination of that sweetness with the pungent depth of shrimp paste, topped with a fried egg and accompanied by cucumber and prawn crackers, is one of the great complete breakfasts or late-night meals of the world. It is simultaneously humble and completely satisfying.</p>`,
+    ingredients: ['600g day-old cooked rice (must be cold — warm rice steams and clumps)','4 eggs','200g shrimp, or diced chicken, or both','3 large shallots, thinly sliced','3 garlic cloves, minced','2 red chilies, sliced','1 tsp shrimp paste (terasi/belacan) — start small','3 tbsp kecap manis (sweet soy sauce)','1 tbsp regular soy sauce','Neutral oil with high smoke point','To serve: fried egg, sliced cucumber, sliced tomato, prawn crackers'],
+    steps: ['Pound or blend shallots, garlic, chili, and shrimp paste into a coarse paste. The shrimp paste smells extremely strong at this stage — this is correct; it mellows completely in cooking.','Heat wok until smoking. Add a generous pour of oil. Add the paste and fry, stirring, until very fragrant and darkened, about 3 minutes.','Add protein. Cook until done. Push to the side.','Add cold rice. Break up any clumps with a spatula. Stir-fry on high heat, tossing constantly.','Add kecap manis and soy sauce. Toss everything to coat. Keep the heat high — the rice should caramelise slightly in the sweet soy.','Taste and season. Serve topped with a fried egg (runny yolk is traditional), with cucumber, tomato, and prawn crackers alongside.'],
+    note: 'Freshly cooked rice is the most common mistake. It contains too much moisture and steams in the wok rather than frying, producing a gluey result. Cook rice the day before and refrigerate.'
+  },
+  {
+    name: 'Mapo Tofu', country: 'China', flag: '🇨🇳', region: 'east_asia',
+    time: '25 mins', serves: 4, difficulty: 'Easy',
+    myth: 'The doubanjiang comes in a jar. The rest is ten minutes of assembly.',
+    history: `<p>Mapo Tofu was created in 1860s Chengdu by the wife of a cook named Chen — <em>mapo</em> means "pockmarked old woman," a somewhat ungenerous reference to her complexion. Her restaurant near Chengdu still operates under the name Chen Mapo Tofu and claims to serve the original recipe. The dish became the defining example of Sichuan cuisine's signature flavour: <em>málà</em>, the combination of numbing heat from Sichuan peppercorns and the fruity fire of chili.</p><p>Its spread globally has been a case study in the power of Chinese migration. Wherever Sichuan restaurants opened, Mapo Tofu became the introduction to Sichuan cooking for non-Chinese diners — the dish that explained what a cuisine could be.</p>`,
+    appeal: `<p>The málà experience — a tingling, numbing, spreading warmth from the Sichuan peppercorn, combined with the vivid heat of chili — is completely novel to most Western palates and immediately memorable. The sensation produced by Sichuan peppercorn is unlike any other spice in the world: it literally affects the nerve receptors in the mouth, creating a fizzing, numbing buzz.</p><p>Mapo Tofu is also supremely satisfying in texture: silken tofu that just holds its shape, surrounded by a thick, glistening sauce of ground pork, fermented black beans, and doubanjiang. Served over plain rice, it is one of the great complete dishes of any cuisine.</p>`,
+    ingredients: ['400g soft silken tofu, cut into 2cm cubes','150g ground pork','3 tbsp doubanjiang (Pixian chili bean paste — the brand and age matter)','1 tbsp fermented black beans (douchi), roughly chopped','4 garlic cloves, minced','2cm ginger, minced','200ml chicken stock','1 tbsp Shaoxing rice wine','1 tbsp soy sauce','1 tsp Sichuan peppercorns, toasted and ground','2 tsp cornstarch dissolved in 2 tbsp cold water','Sesame oil, spring onions to finish'],
+    steps: ['Gently simmer tofu cubes in lightly salted water for 5 minutes to firm them slightly and remove excess moisture. Drain carefully — they are delicate.','In a wok over high heat, fry ground pork until browned and crispy. Add doubanjiang and cook for 2 minutes, stirring — the oil will turn red and fragrant.','Add black beans, garlic, and ginger. Stir 1 minute.','Add Shaoxing wine, then stock. Bring to a simmer.','Slide tofu in gently. Stir very carefully to avoid breaking the cubes. Simmer 4–5 minutes.','Add soy sauce. Pour in cornstarch slurry and stir gently to thicken the sauce slightly. Remove from heat.','Finish with a generous dusting of ground Sichuan pepper. A drizzle of sesame oil. Sliced spring onions. Serve immediately over steamed rice.'],
+    note: 'The doubanjiang is available in Chinese supermarkets. Look for Pixian doubanjiang, aged versions have more depth. Do not substitute sriracha or other chili pastes — the fermented flavour is essential.'
+  },
+  {
+    name: 'Tonkotsu Ramen', country: 'Japan', flag: '🇯🇵', region: 'east_asia',
+    time: '5–6 hrs', serves: 4, difficulty: 'Moderate',
+    myth: 'The broth is hands-off. Time does the work — you are just waiting.',
+    history: `<p>Tonkotsu ramen was developed in 1941 in Kurume, in Fukuoka Prefecture on Japan's southern island of Kyushu, initially as an accident: a cook left pork bones boiling too long and the broth turned milky white. Rather than discarding it, he served it — and discovered something extraordinary. The milky, intensely savoury broth spread quickly across Kyushu and then the rest of Japan, becoming the most internationally recognised style of ramen.</p><p>Ramen culture in Japan is extraordinarily serious — dedicated ramen restaurants (ramen-ya) queue for hours daily, regional varieties are studied with academic rigour, and the Shin-Yokohama Raumen Museum opened in 1994 to document the dish's history. Ramen is Japan's most beloved comfort food and, globally, one of the most sought-after dining experiences.</p>`,
+    appeal: `<p>The tonkotsu broth — creamy white, impossibly rich, intensely savoury — represents a category of flavour that most people have never encountered before trying it. The fat emulsified into the stock during the aggressive boil creates a texture and richness that no other soup achieves. People cross cities for a bowl of good tonkotsu.</p><p>The assembly ritual — the precise arrangement of chashu pork, soft-boiled egg split to reveal its jammy orange yolk, sheets of nori, bamboo shoots, and spring onion — has become one of food culture's most recognisable visual templates. Ramen has achieved a global status that no other single dish from any cuisine approaches.</p>`,
+    ingredients: ['1kg pork trotters, split by your butcher','500g pork neck bones','1 large onion, halved and charred','6 garlic cloves','For tare (seasoning): 4 tbsp soy sauce, 2 tbsp mirin, 1 tbsp sake, 1 tsp salt','Chashu pork: 500g pork belly, rolled and tied; braise in 3 tbsp soy, 2 tbsp mirin, 2 tbsp sake, 1 tbsp sugar, 200ml water for 2 hours','4 soft-boiled eggs, marinated in chashu braising liquid 4+ hrs','Fresh or dried ramen noodles, nori sheets, bamboo shoots, spring onions'],
+    steps: ['Blanch all bones in cold water brought to a boil; discard water; rinse bones and pot. This clears the broth and removes the gamey notes.','Return bones to the pot with charred onion and garlic. Cover with cold water (4–5L). Bring to a rolling boil. Keep it at a rolling boil — unlike most stocks, tonkotsu needs aggressive heat to emulsify the fat and collagen into a milky broth.','Boil for 4–5 hours, topping up with boiling water as needed. The broth will turn white and opaque. Strain. You should have a thick, rich, pale broth.','Meanwhile, braise the pork belly for chashu: bring braising liquid to a simmer, add rolled pork belly, cook covered on low for 2 hours. Cool in liquid. Slice when cold.','Make tare: combine soy, mirin, sake in a small pot. Simmer 5 minutes. This is your seasoning concentrate.','To assemble: add 2 tbsp tare to each bowl. Ladle in hot broth. Add cooked noodles. Top with sliced chashu, half a marinated egg, nori, bamboo shoots, and spring onions.'],
+    note: 'The aggressive rolling boil is counterintuitive — all other stock recipes say "never boil." Tonkotsu needs it. The boiling emulsifies fat and collagen, creating the milky white richness.'
+  },
+  {
+    name: 'Bibimbap', country: 'Korea', flag: '🇰🇷', region: 'east_asia',
+    time: '45 mins', serves: 4, difficulty: 'Easy',
+    myth: 'Rice, vegetables, and an egg. The components are simple; the assembly is the art.',
+    history: `<p>Bibimbap — literally "mixed rice" — has origins that are debated and multiple. Some scholars trace it to royal court cuisine, others to the rural tradition of mixing leftover side dishes (banchan) over rice at year's end. Another origin story connects it to the custom of mixing all ceremonial foods together in one bowl during ancestral rites. Most likely, all these traditions contributed to a dish that formalised something Koreans had always done informally.</p><p>The Jeonju version is considered the gold standard: the city of Jeonju in North Jeolla Province is so identified with bibimbap that it holds an annual festival and its restaurant district is essentially a bibimbap pilgrimage destination. The dish has become Korea's single most globally recognised food.</p>`,
+    appeal: `<p>Bibimbap is visually extraordinary. The arrangement of coloured vegetables in sections around the bowl, the raw egg yolk gleaming at the centre, the glossy meat and white rice below — it is a composed dish that photographs better than almost any other. The visual logic of the composition communicates care and consideration before you have taken a bite.</p><p>The act of mixing — adding gochujang, stirring everything together until the bowl turns orange-red — is participatory and satisfying. And the result: the combination of seasoned vegetables, warm rice, egg, and the sweet heat of gochujang is one of the world's great all-in-one meals.</p>`,
+    ingredients: ['4 cups cooked short-grain white rice','300g beef (sirloin or ribeye), thinly sliced; marinade: 2 tbsp soy sauce, 1 tbsp sesame oil, 1 tbsp sugar, 2 minced garlic cloves, sesame seeds','2 cups fresh spinach','2 cups bean sprouts','1 medium zucchini, julienned','1 medium carrot, julienned','1 cup shiitake mushrooms, sliced','4 eggs (fried sunny-side up)','Sesame oil, garlic, soy sauce, salt — for seasoning each vegetable','Gochujang sauce: 4 tbsp gochujang, 2 tbsp sesame oil, 1 tbsp rice vinegar, 1 tbsp sugar, 1 tbsp water'],
+    steps: ['Marinate beef and cook over high heat in sesame oil until caramelised. Set aside.','Prepare each namul (seasoned vegetable) separately: blanch spinach 30 seconds, squeeze dry, season with garlic, sesame oil, salt. Blanch bean sprouts 2 minutes, season similarly. Sauté zucchini until soft, season. Sauté carrot until soft, season. Sauté mushrooms in sesame oil with garlic, season with soy sauce.','Mix gochujang sauce ingredients together.','Fry eggs sunny-side up — the yolk must be runny.','To assemble: place hot rice in each bowl. Arrange each namul in a section around the bowl like petals. Place beef in the centre. Lay the egg on top.','Bring to the table as-is — the composed bowl is part of the experience. Add gochujang sauce, then mix vigorously with a spoon until everything is evenly combined. Eat immediately.'],
+    note: 'The dolsot version (served in a screaming-hot stone bowl) creates a crispy rice crust at the bottom called nurungji, which is the most prized element. Replicate at home by placing the assembled bowl in a very hot cast-iron pan for 3 minutes before mixing.'
+  },
+
+  // ── SOUTH ASIA ──
+  {
+    name: 'Murgh Makhani', country: 'India', flag: '🇮🇳', region: 'south_asia',
+    time: '1.5 hrs', serves: 6, difficulty: 'Easy',
+    myth: 'The tandoor myth ends here. A grill or broiler gets the char. A blender handles the sauce.',
+    history: `<p>Murgh Makhani — Butter Chicken — was created accidentally in 1950s Delhi by Kundan Lal Gujral, the founder of Moti Mahal restaurant in Daryaganj. Leftover tandoor-cooked chicken was added to a mild tomato-butter-cream sauce to keep it moist and prevent waste. The result was so popular that it became the restaurant's signature and, within decades, the most internationally recognised Indian dish in the world.</p><p>The dish is controversial in India — many purists view it as a simplified, Westernised version of richer, more complex Mughal-influenced cuisine. Its global dominance is sometimes resented at home. The family of Kundan Lal Gujral has also engaged in legal disputes with another Delhi restaurant that claims the dish as its own invention.</p>`,
+    appeal: `<p>Butter Chicken's global domination rests on a sauce that manages to be simultaneously rich and accessible: the cream and butter mellow the tomato's acidity, the garam masala provides warmth without heat, and the fenugreek leaf adds a slightly bitter, deeply aromatic note that makes the whole thing deeply savoury and impossible to replicate with any substitution.</p><p>It is, in food terms, genuinely irresistible — a combination so perfectly calibrated for broad palates that it has become the gateway through which most of the world encounters Indian food. Whether that is a good thing is another question entirely.</p>`,
+    ingredients: ['800g boneless chicken thighs','Marinade: 150g plain yogurt, 1 tbsp lemon juice, 1 tsp each cumin, coriander, turmeric, garam masala, chili powder, salt, 1 tbsp oil','Sauce: 400g crushed tomatoes, 1 large onion (roughly chopped), 4 garlic cloves, 3cm ginger, 100ml double cream, 50g cold butter, 2 tbsp neutral oil','Spices: 1 tsp garam masala, 1 tsp chili powder, 1 tsp cumin, 1 tsp sugar','1 tbsp kasuri methi (dried fenugreek leaves) — non-negotiable'],
+    steps: ['Combine marinade ingredients, add chicken, coat thoroughly. Marinate at minimum 2 hours, overnight is better.','Grill or broil marinated chicken on high heat until charred at the edges — this char flavour is essential and gives the dish depth that the oven alone cannot achieve.','For the sauce: sauté onion in oil until golden. Add ginger and garlic paste. Cook 2 minutes. Add crushed tomatoes and spices. Simmer 20 minutes.','Blend sauce until completely smooth. Return to pan and pass through a sieve for a restaurant-level smoothness (optional but worthwhile).','Add butter in pieces, stirring in. Add cream. Simmer gently 5 minutes.','Cut chicken into pieces. Add to sauce. Simmer 10 minutes. Add crusuri methi — crush it between your palms as you add it. Taste and adjust seasoning. Serve with naan or rice.'],
+    note: 'Kasuri methi (dried fenugreek leaf) is the single ingredient that separates authentic Butter Chicken from all imitations. It is available in any Indian grocery store and worth seeking out.'
+  },
+  {
+    name: 'Biryani', country: 'India / Pakistan', flag: '🇮🇳', region: 'south_asia',
+    time: '2.5 hrs', serves: 6, difficulty: 'Moderate',
+    myth: 'Layer, seal, and trust the process. The dum seal is foil and the oven. No special equipment needed.',
+    history: `<p>Biryani traces its origins to the Mughal court, where Persian-speaking rulers combined their Central Asian rice traditions with the spices and techniques of the Indian subcontinent. The word likely derives from the Persian <em>birian</em> (fried before cooking) or <em>brinj</em> (rice). It became the definitive festive dish of the Mughal Empire — served at court banquets, weddings, and celebrations of state.</p><p>As the empire contracted, biryani dispersed across the subcontinent and each region developed its own character: Hyderabadi biryani (dum-style, fragrant with saffron), Lucknowi (subtler, more aromatic), Kolkata (with a Bengali-influenced flavour profile), Sindhi, Bombay. The result is not one dish but dozens of related expressions of a single concept.</p>`,
+    appeal: `<p>The visual of biryani — the fragrant saffron-stained rice giving way to the spiced meat below, garnished with fried onions and fresh herbs — is one of cooking's great presentations. The drama of the sealed pot being opened at the table, releasing a cloud of saffron-scented steam, is a ritual that travels across cultural contexts.</p><p>The flavour range in a single spoonful — whole spices (cardamom, cinnamon, clove) alongside ground spices, yogurt-tenderised meat, fragrant basmati rice — represents a complexity that rewards attention. Biryani is a dish that reveals itself slowly across the meal.</p>`,
+    ingredients: ['800g chicken thighs, bone-in (or lamb, or paneer)','400g aged basmati rice, soaked in cold water 30 minutes','2 large onions, very thinly sliced (for frying)','300g plain yogurt','4 tbsp ghee, divided','Whole spices: 4 green cardamom, 4 cloves, 1 cinnamon stick, 2 bay leaves','Ground spices for marinade: 1 tsp coriander, 1 tsp cumin, 1 tsp garam masala, 1 tsp red chili powder, 1 tsp turmeric, salt','Large pinch saffron bloomed in 3 tbsp warm milk','Fresh mint, cilantro — generous handfuls','Dough or foil to seal the pot'],
+    steps: ['Fry sliced onions in ghee or oil over medium heat, stirring, until deep golden and crisp — 25–30 minutes. This is the most time-consuming step but non-negotiable. Drain on paper. Reserve the cooking fat.','Marinate chicken in yogurt, ground spices, salt, half the fried onions, and 2 tbsp of the onion-infused fat. Marinate at least 2 hours.','Boil salted water with whole spices. Add drained rice. Cook until 70% done — grains should have a pronounced bite in the centre. Drain immediately. Discard whole spices.','In a heavy pot with lid, cook the marinated chicken over medium heat until half done — about 10 minutes.','Layer partially cooked rice over the chicken. Drizzle saffron milk over the rice. Add remaining ghee. Top with remaining fried onions and fresh herbs.','Seal pot tightly with foil, then place lid on top. Cook on very low heat (or in a 150°C oven) for 25 minutes — this is the dum cook. Do not open the pot. Rest 5 minutes before serving.'],
+    note: 'The 70% cooked rice is crucial. Rice that is fully cooked before dum will become mushy. The final cooking in the sealed pot finishes the rice while absorbing the flavours from the meat and steam below.'
+  },
+  {
+    name: 'Dal Makhani', country: 'India', flag: '🇮🇳', region: 'south_asia',
+    time: '12–14 hrs (mostly unattended)', serves: 6, difficulty: 'Easy',
+    myth: 'The longer you leave it alone, the better it becomes. Patience is the entire technique.',
+    history: `<p>Dal Makhani was also created at Moti Mahal restaurant in Delhi by Kundan Lal Gujral — the same kitchen that produced Butter Chicken. The story is that the whole black lentils (urad dal) were left to cook overnight on the dying embers of the tandoor, with butter and tomatoes added in the morning. The result — a deeply creamy, smoky lentil dish — became the second great creation of that restaurant and spread globally alongside Butter Chicken as the definitive expression of North Indian restaurant cooking.</p><p>Dal Makhani has become so associated with Indian restaurants worldwide that it is now considered the benchmark of kitchen quality in Indian fine dining: how a kitchen executes its dal signals the care applied to everything else.</p>`,
+    appeal: `<p>Dal Makhani achieves something remarkable: a dish made from dried lentils and butter that achieves a richness, depth, and complexity that seems to belong to a much more elaborate preparation. The long, slow cook transforms humble lentils into something that tastes smoked, earthy, and almost meaty, even without meat.</p><p>It is deeply comforting in a way that crosses cultural lines — a creamy, protein-rich lentil dish that works as a side, as a main, with bread or with rice. The addition of cream and butter at the end is straightforwardly luxurious. It is the dish that converts lentil-sceptics.</p>`,
+    ingredients: ['250g whole black lentils (urad dal), soaked overnight','50g dried red kidney beans, soaked overnight','80g unsalted butter','50ml double cream, plus more to finish','400g crushed tomatoes','1 large onion, finely diced','6 garlic cloves, minced','2cm ginger, minced','1 tsp chili powder','2 tsp garam masala','1 tsp ground cumin','Salt to taste'],
+    steps: ['Drain soaked lentils and beans. Pressure cook for 45 minutes (or simmer in plenty of water for 2–2.5 hours) until very soft and collapsing. Do not drain — retain all the cooking liquid.','In a large, heavy pot, sauté onion in butter until deeply golden — 20 minutes. Add ginger and garlic paste. Cook 3 minutes. Add tomatoes and all spices. Cook 20 minutes until the fat separates.','Add cooked lentils and their liquid to the tomato base. Stir well to combine.','From this point: simmer on the absolute lowest heat possible for a minimum of 2 hours, ideally 4 hours. Stir every 30 minutes. Add water if it thickens too much.','Add butter in pieces, stirring in. Add cream. Simmer another 30 minutes.','Check seasoning. The dal should be very thick, dark, and deeply fragrant. Serve with a final swirl of cream on top and naan or rice.'],
+    note: 'The authentic version was cooked overnight on tandoor embers. Replicate this by placing the covered pot in a very low oven (120°C) overnight after step 4. The result is extraordinary.'
+  },
+
+  // ── MIDDLE EAST & NORTH AFRICA ──
+  {
+    name: 'Lamb Tagine', country: 'Morocco', flag: '🇲🇦', region: 'mena',
+    time: '2.5 hrs', serves: 6, difficulty: 'Easy',
+    myth: 'You do not need a tagine pot. A heavy-lidded Dutch oven produces identical results.',
+    history: `<p>The tagine — both the conical clay pot and the slow-cooked stew made in it — has Berber origins that predate the Arab conquest of North Africa in the 7th century. The distinctive conical lid creates a circulation system for steam, which condenses and drips back over the meat during cooking, keeping it moist and tender with minimal liquid. The technique is particularly well-suited to the meat available in the Maghreb: mature, flavourful lamb that benefits from extended braising.</p><p>Moroccan tagines are distinguished from all other braised dishes by their spice combinations: preserved lemon, argan oil, ras el hanout, cinnamon, and ginger create a sweet-savoury complexity that belongs to North Africa and nowhere else. The tradition of serving tagine with couscous or bread and eating communally from the same pot reflects a hospitality culture in which food is inseparable from generosity.</p>`,
+    appeal: `<p>The sweet-savoury character of Moroccan tagine — lamb with preserved lemon, olives, and saffron, or lamb with prunes and almonds — is one of the great revelatory flavour experiences for Western palates encountering it for the first time. The combination of dried fruit with meat, of spice with sweetness, feels both ancient and completely fresh.</p><p>Preserved lemon in particular is the element that converts people. Its intensity — all the flavour of lemon concentrated into the rind, with a fermented depth that fresh lemon cannot replicate — is one of the most powerful single ingredients in any culinary tradition.</p>`,
+    ingredients: ['1.2kg lamb shoulder, cut into large cubes','2 medium onions, grated','3 garlic cloves, minced','1 preserved lemon, pulp discarded, rind finely chopped','150g green olives, pitted','Large pinch saffron, bloomed in warm water','1 tsp ground ginger','1 tsp ground cumin','½ tsp turmeric','½ tsp cinnamon','300ml good chicken or lamb stock','Olive oil, salt, fresh cilantro and flat-leaf parsley'],
+    steps: ['Combine lamb with grated onion, garlic, cumin, ginger, turmeric, cinnamon, and 2 tbsp olive oil. Season generously. Marinate at least 1 hour, overnight if possible.','Brown lamb in batches in a Dutch oven over high heat. Remove. Deglaze pot with a splash of stock.','Return lamb. Add saffron (with its soaking water) and remaining stock. Bring to a simmer.','Cover tightly and cook over very low heat — or in a 160°C oven — for 1.5 hours until lamb is completely tender.','Add preserved lemon rind and olives. Cook a further 20–30 minutes uncovered to reduce and concentrate the sauce slightly.','Check seasoning. Finish with generous fresh cilantro and parsley. Serve with couscous, flatbread, or both.'],
+    note: 'Preserved lemons are available in jars at most supermarkets and all Middle Eastern stores. Use only the rind — the pulp is too intensely salty. If unavailable, a combination of lemon zest and a little brined olive liquid is an imperfect but workable substitute.'
+  },
+  {
+    name: 'Bastilla', country: 'Morocco', flag: '🇲🇦', region: 'mena',
+    time: '2.5 hrs', serves: 8, difficulty: 'Moderate',
+    myth: 'Filo pastry from the supermarket does the hard work. The sweet-savoury filling does the rest.',
+    history: `<p>Bastilla (also spelled pastilla or b'stilla) is believed to have Moorish-Andalusian origins — carried to Morocco in 1492 by Muslims expelled from Spain after the fall of Granada. The recipe of pigeon, almonds, egg, and spices layered in thin pastry (warka) represents the elaborate court cooking of al-Andalus, preserved and elaborated in Morocco's imperial cities of Fez and Marrakech.</p><p>It is Morocco's most celebratory and complex dish: traditionally served at weddings and feast days, requiring considerable preparation. The combination of pigeon (or chicken), eggs scrambled in the braising juices, sweetened almonds, and a dusting of powdered sugar and cinnamon on the crisp exterior is one of the great expressions of the sweet-savoury cooking tradition that spans the Mediterranean and Middle East.</p>`,
+    appeal: `<p>Bastilla defies simple description — it is simultaneously a savoury pie and a sweet one, a main course and something approaching dessert. The powdered sugar and cinnamon dusted over the golden pastry exterior is a statement of intent: this dish belongs to the tradition of combining sugar with meat, a convention that was common to medieval European and Arab cooking alike and has survived intact in Morocco.</p><p>The textural range — shatteringly crisp pastry, soft scrambled egg, tender shredded chicken, crunchy almonds — in a single bite is one of the great compositions of world food. First-time encounters with bastilla are routinely described as revelatory.</p>`,
+    ingredients: ['6 chicken thighs (bone-in), or 1 whole chicken','2 medium onions, grated','1 tsp ground ginger','1 tsp cinnamon','½ tsp saffron, bloomed in warm water','Large bunch cilantro, chopped','Large bunch flat-leaf parsley, chopped','5 eggs, beaten','250g blanched almonds, toasted and roughly chopped','3 tbsp icing sugar, plus more for dusting','1 tsp cinnamon for almonds','12 sheets filo pastry','100g unsalted butter, melted'],
+    steps: ['Braise chicken with onions, saffron, ginger, cinnamon, and herbs in 200ml water until very tender — about 45 minutes. Remove chicken. Shred finely, discarding skin and bones.','Reduce the braising liquid over high heat until thick. Add beaten eggs, stirring constantly over low heat to create a loose, slightly dry scramble in the liquid. Season. The egg mixture should absorb all the liquid.','Mix toasted almonds with icing sugar and cinnamon. Taste — it should be pleasantly sweet and fragrant.','Brush a 28cm round baking dish or skillet with butter. Layer 6 filo sheets in the dish, each brushed with butter, overlapping and extending well over the edges.','Layer: almond mixture first, then egg mixture, then shredded chicken. Fold the overhanging pastry over the filling.','Lay remaining 6 sheets of buttered filo over the top, tucking edges underneath. Brush exterior generously with butter.','Bake at 180°C for 25–30 minutes until deep golden and crisp. Dust immediately with icing sugar and draw cinnamon lines across the top in a pattern.'],
+    note: 'The powdered sugar and cinnamon on top are not decorative and not optional — they are the punctuation of the entire dish. Bastilla served without the sweet finish is an unfinished sentence.'
+  },
+  {
+    name: 'Fesenjan', country: 'Iran', flag: '🇮🇷', region: 'mena',
+    time: '1.5 hrs', serves: 6, difficulty: 'Easy',
+    myth: 'Blend walnuts, add pomegranate molasses, braise chicken. The combination does all the work.',
+    history: `<p>Fesenjan is one of the great dishes of Persian cuisine, documented in medieval sources and central to Iranian celebratory cooking today. It is served at Yalda Night (the winter solstice celebration), at weddings, and on the Persian New Year table — events where food carries symbolic weight. The combination of walnuts and pomegranate is specifically Persian, appearing in texts going back to the Safavid period in the 16th century.</p><p>The pomegranate is deeply symbolic in Persian culture — a fruit of fertility, abundance, and the underworld simultaneously. That it forms the foundation of Iran's most celebrated festive dish is not accidental; food and symbol are inseparable in Persian cooking in a way that few cuisines can match.</p>`,
+    appeal: `<p>Fesenjan has one of the most unusual flavour profiles in global cooking: deeply rich from the ground walnuts, sharply sour from the pomegranate molasses, and dark in colour and character in a way that puts it closer to mole negro than any curry or braise. The finished stew is almost chocolatey — nearly black — and tastes of ancient kitchens.</p><p>It is the kind of dish that people try once out of curiosity and thereafter crave. The walnut-pomegranate combination is genuinely irreplaceable: there is nothing else like it in world cooking, and no adequate substitute for either element.</p>`,
+    ingredients: ['800g bone-in chicken thighs','300g walnut halves','250ml pomegranate molasses (taste first — brands vary enormously in sweetness)','1 large onion, finely diced','1 tsp turmeric','½ tsp cinnamon','½ tsp ground cardamom','Sugar and salt to balance','Large pinch saffron dissolved in 2 tbsp warm water (optional)','Neutral oil, pomegranate seeds to garnish'],
+    steps: ['Toast walnuts in a dry pan over medium heat, stirring, until fragrant and lightly coloured — about 5 minutes. Cool completely. Grind in a food processor to a fine meal. Do not skip the toasting — it removes bitterness and adds depth.','Sauté onion in oil until deeply golden. Add turmeric, cinnamon, cardamom. Stir 1 minute.','Add chicken thighs. Brown lightly on both sides.','Add ground walnuts, pomegranate molasses, saffron, and 300ml water. Stir to combine. The sauce will be very thick.','Cover and simmer on low heat for 1–1.5 hours, stirring occasionally. The stew darkens progressively — this is correct.','Taste and adjust: add sugar if too sour, more pomegranate molasses if too bland. The balance should be pleasantly bittersweet. Season with salt. Serve over Persian-style rice.'],
+    note: 'The finished colour should be very dark — almost black-brown. If it looks pale, the walnuts need longer cooking to release their oils into the sauce. The colour is the quality indicator.'
+  },
+  {
+    name: 'Mansaf', country: 'Jordan', flag: '🇯🇴', region: 'mena',
+    time: '2 hrs', serves: 8, difficulty: 'Moderate',
+    myth: 'The yogurt sauce is the only delicate step — and warming it gently is all it requires.',
+    history: `<p>Mansaf is Jordan's national dish and the embodiment of Bedouin hospitality culture. In the desert traditions of the Jordanian Badia, offering mansaf to a guest was — and remains — the highest expression of honour and generosity. The dish consists of lamb cooked in a fermented dried-yogurt sauce called jameed, served over rice and flatbread, garnished with almonds and pine nuts, and eaten communally from a shared platter.</p><p>Jameed — the dried, salted yogurt made from goat or sheep milk — is the ingredient that defines mansaf and distinguishes it from every other braised lamb dish. Its funky, intensely sour character creates a sauce unlike anything in European or Asian cooking, with a depth that is partly tannic, partly sour, and wholly compelling. Good jameed is aged for months and carries the concentrated flavour of the desert.</p>`,
+    appeal: `<p>Mansaf's appeal rests in its architectural drama and its generosity. The dish is assembled on a large communal platter — flatbread at the base, rice piled over it, whole pieces of lamb layered on the rice, the pale yogurt sauce poured over everything, nuts scattered across the top. It is monumental food that announces its importance before you have tasted it.</p><p>Eating mansaf with the right hand, standing around the shared platter, is one of the great communal eating rituals of the Middle East — a gesture that says something about trust, equality, and the shared nature of nourishment. The experience is as much social architecture as it is food.</p>`,
+    ingredients: ['1.5kg bone-in lamb shoulder or leg, cut into large pieces','200g jameed (available at Middle Eastern stores), dissolved in 1L warm water — or substitute 800ml good plain yogurt thinned with lamb stock','1 tsp turmeric, 1 tsp cinnamon, salt','2 onions, quartered','400g long-grain rice, parboiled in lamb stock','Large flatbreads','50g pine nuts and slivered almonds, fried in butter until golden'],
+    steps: ['Season lamb. Simmer in 1.5L water with onions, turmeric, cinnamon, and salt for 1.5 hours until very tender. Skim throughout. Reserve all the stock.','If using jameed: dissolve in warm water, strain, combine with 500ml warm lamb stock. If using plain yogurt: thin generously with warm lamb stock until pourable.','Warm the yogurt sauce over the lowest possible heat, whisking continuously. Do not boil — it will split. The goal is a hot, fluid, pourable sauce.','Cook rice in lamb stock seasoned with salt and a little butter.','Assemble: lay flatbreads on a large platter. Pile rice over the bread. Arrange lamb over the rice. Pour warm yogurt sauce generously over everything. Top with fried nuts. Bring remaining sauce to the table.','Serve communally. The bread at the bottom, soaked with sauce, is considered the most prized part.'],
+    note: 'The yogurt sauce must never boil. Keep it over the gentlest possible heat and stir continuously. If it splits, the flavour remains but the visual suffers. Low and slow is everything here.'
+  },
+  {
+    name: 'Shakshuka', country: 'Tunisia / Levant', flag: '🇹🇳', region: 'mena',
+    time: '30 mins', serves: 4, difficulty: 'Easy',
+    myth: 'One pan. Thirty minutes. It is deliberately the counterpoint to everything else in this database.',
+    history: `<p>Shakshuka's origins are debated between North Africa (particularly Tunisia and Libya) and the broader Levant — the word is likely Arabic or Turkish, meaning "a mixture." It was brought to Israel by Jewish immigrants from North Africa and Yemen in the mid-20th century, where it became so embedded in Israeli food culture that it is now considered a national dish there too. It is a rare dish simultaneously claimed, with equal passion, by multiple cultures.</p><p>Its global explosion came during the 2010s, when it appeared on brunch menus worldwide as the accessible face of Middle Eastern cooking. Its combination of visual drama, simplicity, and low cost made it ideally suited to the era of food photography and the rise of one-pan, weeknight cooking culture.</p>`,
+    appeal: `<p>Shakshuka's global appeal is almost entirely explained by its visual: eggs poached in vivid red-orange tomato sauce, the white fully set and the yolk gleaming, scattered with crumbled white feta and fresh herbs. It is one of the most photographable dishes in global cooking, and photographs have driven its spread as much as its flavour.</p><p>The flavour is as honest as the process: spiced tomato sauce, sweet pepper, and the richness of eggs, cut by briny feta. It works at breakfast, lunch, or dinner. It requires almost no skill. It feeds four from one pan. Its inclusion here is a deliberate editorial choice: not every famous dish needs to be difficult.</p>`,
+    ingredients: ['6 large eggs','400g crushed tomatoes','2 red peppers, diced','1 large onion, diced','4 garlic cloves, sliced','1 tsp ground cumin, 1 tsp sweet paprika, ½ tsp smoked paprika, ½ tsp chili flakes','Olive oil, salt, pepper','100g feta cheese, crumbled','Fresh flat-leaf parsley or cilantro','Flatbread or crusty bread'],
+    steps: ['Heat olive oil in a wide, heavy pan with a lid. Sauté onion and peppers over medium heat until completely soft — about 10 minutes.','Add garlic and all spices. Cook 1 minute until very fragrant.','Add crushed tomatoes. Season generously. Simmer 15 minutes until thick and slightly darkened. Taste — it should be well-seasoned and punchy.','Make 6 wells in the sauce with a spoon. Crack an egg into each well. Season eggs lightly.','Cover the pan. Cook over medium-low heat for 6–8 minutes until egg whites are fully set but yolks are still runny. Check at 6 minutes.','Crumble feta over the top. Add fresh herbs. Bring the pan directly to the table. Serve with bread.'],
+    note: 'The window between runny yolk and overcooked is small and varies by pan and heat. Check at 6 minutes. Eggs continue cooking in residual heat after you remove the lid — account for this.'
+  },
+
+  // ── SUB-SAHARAN AFRICA ──
+  {
+    name: 'Doro Wat', country: 'Ethiopia', flag: '🇪🇹', region: 'africa',
+    time: '2.5 hrs', serves: 6, difficulty: 'Moderate',
+    myth: 'The deeply caramelised onion base does the flavour work. Berbere follows from a jar.',
+    history: `<p>Doro Wat — literally "chicken stew" — is Ethiopia's national dish and one of the country's most ceremonially important foods. It is traditionally prepared for Ethiopian Christmas (Genna, celebrated January 7), Easter, and major celebrations. A cook's reputation rests on their doro wat: the depth of the onion caramelisation, the quality of the niter kibbeh (spiced clarified butter), and the balance of the berbere are all precise markers of skill and care.</p><p>It is always served with injera — the spongy sourdough flatbread made from teff that serves simultaneously as plate, utensil, and accompaniment. The injera's sourness is specifically calibrated to contrast with the richness of the wat. One without the other is incomplete. Together they represent one of the world's great food pairings.</p>`,
+    appeal: `<p>The berbere spice blend — chili, fenugreek, coriander, cardamom, black pepper, ajwain, and others — produces a flavour unlike any other spice profile in world cooking. It is hot but not simply hot: layered with aromatic depth that reveals itself slowly across a meal and lingers long after.</p><p>The Ethiopian tradition of eating communally from a shared injera — tearing pieces with the right hand and using them to pick up portions of wat — is one of the world's most convivial eating rituals. The hard-boiled eggs pierced and added to the stew, absorbing the sauce from the inside out, are a textural and visual signature that makes doro wat immediately recognisable and deeply memorable.</p>`,
+    ingredients: ['1 whole chicken, jointed (or 6 large bone-in thighs)','1kg onions, very finely diced — this quantity is correct and non-negotiable','4 tbsp berbere spice blend (from African or specialist food stores)','4 tbsp niter kibbeh (Ethiopian spiced butter) or clarified butter','4 garlic cloves, minced','2cm ginger, minced','150ml dry red wine','6 large eggs, hard-boiled, peeled and pricked all over with a fork','Salt, injera to serve'],
+    steps: ['Place finely diced onions in a heavy pot with no fat or liquid over medium heat. Stir continuously for 20–25 minutes as they dry and begin to colour. This dry-cooking extracts moisture before caramelisation begins.','Add niter kibbeh. Cook and stir for a further 20 minutes until the onions are very dark, jammy, and almost melted into a paste. The 45-minute onion base is the foundation of everything.','Add garlic and ginger. Stir 2 minutes. Add berbere. Cook 5–8 minutes, stirring constantly — the paste darkens and becomes intensely fragrant.','Add chicken pieces. Stir to coat thoroughly. Add wine and 200ml water. Cover and simmer on low heat 40–50 minutes until very tender.','Add the pierced hard-boiled eggs for the final 15 minutes. They absorb the sauce through the piercings.','Serve over injera, available from Ethiopian restaurants or African food stores. Injera is not a garnish — it is fundamental to the dish.'],
+    note: 'Berbere is available from African food stores and online. The commercial blends vary widely in quality and heat. Taste yours before using and adjust the quantity accordingly.'
+  },
+  {
+    name: 'Jollof Rice', country: 'West Africa', flag: '🌍', region: 'africa',
+    time: '1.5 hrs', serves: 8, difficulty: 'Easy',
+    myth: 'A little char at the bottom is the goal, not a mistake. Let the heat do its work.',
+    history: `<p>Jollof rice derives from thieboudienne, the Senegalese one-pot rice dish considered the origin of the Jollof tradition, named after the Wolof people of Senegal and The Gambia. As the dish spread across West Africa, it adapted radically to local ingredients and palates. The Nigerian and Ghanaian versions are now the most globally recognised, and the Jollof Wars — the ongoing, passionate debate between them over whose version is superior — have become one of food culture's most entertaining arguments, with genuine national pride behind the jokes.</p><p>Party jollof — cooked over open wood fire at outdoor events — is considered the pinnacle of the form. The smoky bottom crust that develops from the intense heat is prized above all other elements. It cannot be replicated on a gas hob, but the oven method below comes close.</p>`,
+    appeal: `<p>One-pot tomato rice, cooked until deeply flavoured with a slightly smoky base, is a concept that appears in Spanish, Persian, Caribbean, and now globally recognised West African cooking. Jollof stands apart through the intensity of its tomato-pepper base and the specific technique of long-frying the blended tomato paste before adding liquid — a step that concentrates flavour to a depth no shortcut achieves.</p><p>It is also food that scales infinitely, feeds communities, and improves with quantity. The Jollof Wars are part of the dish's global identity now — it is one of the few foods whose cultural argument is itself internationally famous. Everyone has a strong opinion about it, including people who have never cooked it.</p>`,
+    ingredients: ['500g parboiled long-grain rice, washed','400g crushed tomatoes','2 red bell peppers, roughly chopped','2 scotch bonnet chilies (adjust to heat tolerance)','2 large onions (1 for blending, 1 sliced)','4 tbsp tomato paste','500ml good chicken or beef stock','1 tsp dried thyme, 1 tsp curry powder, 2 bay leaves','Generous neutral oil, salt, stock cube (optional)'],
+    steps: ['Blend crushed tomatoes, red peppers, scotch bonnet, and one onion together until smooth.','Heat very generous oil in a wide, heavy pot. Add tomato blend. Fry over medium-high heat, stirring frequently, for 30–40 minutes until it darkens significantly and the raw smell is completely gone. It should look almost dry and deeply coloured. This step cannot be rushed.','Add sliced second onion and tomato paste. Fry a further 10 minutes.','Add stock, thyme, curry powder, bay leaves. Season assertively — Jollof rice needs bold seasoning.','Add washed rice and stir once. Cover tightly.','Cook on medium heat 15 minutes, then reduce to lowest possible heat 20 minutes. Do not open the lid repeatedly. The slight smokiness at the base — the party jollof effect — is the goal.'],
+    note: 'The long frying of the tomato base is what separates great Jollof from acceptable Jollof. Thirty minutes minimum. The colour should darken from bright red to a deep orange-brick before you add any stock.'
+  },
+  {
+    name: 'Bobotie', country: 'South Africa', flag: '🇿🇦', region: 'africa',
+    time: '1.5 hrs', serves: 6, difficulty: 'Easy',
+    myth: 'Spiced meatloaf with egg custard on top. The Cape Malay flavour profile is its own reward.',
+    history: `<p>Bobotie is South Africa's national dish and one of the oldest European-influenced recipes in Africa. It traces its origins to the Cape Malay community — the enslaved people and political prisoners brought from the Dutch East Indies (modern Indonesia and Malaysia) to the Cape Colony from the 17th century onward. They brought with them the spice knowledge of Southeast Asia and combined it with Dutch cooking traditions of the Cape, producing a cuisine entirely its own.</p><p>The earliest documented Cape Malay bobotie recipe appears in a Dutch cookbook of 1609. The custard topping, the apricot jam, the raisins, the curry-spiced meat — all of these elements are present in the historical recipe and remain in the contemporary dish, making bobotie one of the most historically continuous recipes in the world.</p>`,
+    appeal: `<p>Bobotie's appeal rests in its gentle strangeness: spiced ground meat with raisins and apricot jam, topped with a baked egg custard, is a combination that sounds unlikely and tastes immediately, deeply comforting. The Cape Malay spice tradition — warm rather than fiery, fragrant with cinnamon, turmeric, and curry — creates a flavour that is simultaneously exotic and familiar.</p><p>It is a dish that rewards engagement: the custard on top, the sweet-spiced meat below, the yellow rice alongside, the fruit chutney at the table — every element plays a deliberate role. South Africans carry profound nostalgia for it. First-time visitors are surprised by how much they want to eat it again.</p>`,
+    ingredients: ['800g ground beef or lamb (or half and half)','2 onions, finely diced','3 garlic cloves, minced','2 tbsp Cape Malay or medium curry powder','1 tsp turmeric','2 slices white bread, soaked in milk and squeezed dry','2 tbsp apricot jam','2 tbsp fruit chutney','50g raisins, 50g slivered almonds','Juice of 1 lemon, salt','Custard topping: 2 large eggs beaten with 250ml whole milk, salt, pinch turmeric','6 bay leaves'],
+    steps: ['Sauté onions until very soft and beginning to colour. Add garlic, cook 1 minute.','Add ground meat. Break up and brown well. Add curry powder, turmeric — stir and cook 2 minutes.','Add squeezed bread (this binds and lightens the mixture), apricot jam, chutney, raisins, almonds, lemon juice. Mix thoroughly. Season — it should taste sweetly spiced.','Transfer to a buttered baking dish. Press into an even layer.','Beat eggs with milk, salt, and a pinch of turmeric. Pour evenly over the meat. Lay bay leaves on the surface.','Bake at 180°C for 35–40 minutes until the custard is just set with a slight wobble and lightly golden. Rest 10 minutes before serving.'],
+    note: 'Serve with yellow rice (basmati cooked with turmeric, raisins, and cinnamon) and fruit chutney alongside. The complete plate — bobotie, yellow rice, chutney — is the dish. Each element modifies the others.'
+  },
+
+  // ── THE AMERICAS ──
+  {
+    name: 'Mole Negro', country: 'Mexico', flag: '🇲🇽', region: 'americas',
+    time: '3–4 hrs', serves: 8, difficulty: 'Moderate',
+    myth: 'The complexity comes from layering, not technique. Each step is simple — there are just many of them.',
+    history: `<p>Mole negro is one of the great dishes of Mesoamerican civilisation, with pre-Columbian roots and colonial elaboration. The Nahuatl word molli means sauce, and the complex preparations now called mole were documented by Spanish missionaries in the 16th century as indigenous ritual foods. The incorporation of Old World ingredients — chocolate, dried fruits, almonds — after the Conquest created the dishes we recognise today.</p><p>The two great mole capitals are Oaxaca and Puebla. Each claims the definitive version. The nuns of Puebla's convents are traditionally credited with developing the most elaborate iterations during the colonial period, combining European spices with indigenous chilies and cacao. Oaxacan mole negro is darker, more intensely chili-forward, and incorporates dried avocado leaf as a distinctive local signature.</p>`,
+    appeal: `<p>Mole negro is the dish most people cite when asked about Mexico's greatest contribution to world cuisine. Its combination of dried chili, dark chocolate, seeds, nuts, charred tortilla, and plantain creates a flavour simultaneously ancient and utterly contemporary — deeply savoury, faintly sweet, bittersweet from the chocolate, warming with layered spice that builds slowly.</p><p>The mythologised complexity — "100 ingredients, three days of work" — has given mole an almost spiritual status in Mexican food culture. The adapted version here is honest: the principle is identical, the flavour genuinely close. Mole rewards time and cannot be rushed. The reward is commensurate.</p>`,
+    ingredients: ['4 dried mulato chilies, 4 dried ancho chilies, 2 dried pasilla chilies — all seeded and toasted','50g dark chocolate (70%+)','2 ripe tomatoes, charred under a broiler','½ ripe plantain, fried golden','1 corn tortilla, fried crisp','1 slice white bread, fried','50g sesame seeds, toasted','50g pumpkin seeds, toasted','4 garlic cloves and 1 onion, charred','1 tsp cumin, 1 cinnamon stick, 4 cloves, 4 black peppercorns','Pinch dried thyme, 1 dried avocado leaf if available','500ml good chicken stock','Lard or neutral oil','1 whole chicken jointed, salt and sugar to balance'],
+    steps: ['Toast dried chilies in a dry pan 1–2 minutes per side until fragrant. Cover with boiling water, soak 30 minutes.','Char tomatoes, onion, and garlic directly over flame or under broiler. Fry bread and tortilla in oil until golden. Fry plantain until golden. Toast sesame and pumpkin seeds separately in a dry pan.','Blend soaked chilies (with some soaking liquid) until smooth. Blend separately: toasted seeds, then charred tomatoes and aromatics, then fried bread, tortilla, and plantain. Work in batches.','In a deep, heavy pot, heat 3 tbsp lard over medium heat. Add chili purée — it will splatter. Fry stirring constantly 5 minutes. Add seed paste. Fry 5 more minutes.','Gradually add other blended elements, then stock. Add chocolate, whole spices, thyme. Stir well.','Simmer covered on low heat 1–1.5 hours, stirring every 15 minutes. Season with salt; add a little sugar to balance bitterness. The mole should be thick, very dark, and deeply complex.','Cook chicken pieces in the mole for the final 30 minutes. Serve with rice, warm tortillas, and sesame seeds.'],
+    note: 'Mole improves significantly over 2–3 days as flavours develop and integrate. Make the sauce ahead, refrigerate, and reheat with freshly cooked chicken before serving.'
+  },
+  {
+    name: 'Ceviche', country: 'Peru', flag: '🇵🇪', region: 'americas',
+    time: '30 mins', serves: 4, difficulty: 'Easy',
+    myth: 'Lime juice is the oven. No heat required — acid does the cooking.',
+    history: `<p>Ceviche is Peru's national dish and one of the oldest extant cooking techniques in the Americas. Pre-Inca coastal peoples cured fish in the juices of tumbo (a tropical fruit) with salt and chili — a technique documented to at least 2,000 years ago. The Spanish introduced citrus in the 16th century, and lime replaced tumbo, producing the dish recognisable today.</p><p>June 28 is Peru's Día Nacional del Ceviche, a public celebration that reflects how central the dish is to national identity. The leche de tigre — the citrus-fish curing liquid left in the bowl — is traditionally drunk as a finale and is credited in Peru with restorative and aphrodisiac properties. The ritual of the leche de tigre shot is as important as the fish itself.</p>`,
+    appeal: `<p>Ceviche represents one of cooking's most elegant concepts: acid denatures the proteins in raw fish, producing a cooked texture without any heat. The explanation — "the lime juice cooks the fish" — is one of cooking's great conversation starters. The concept genuinely surprises people encountering it for the first time.</p><p>The clean, sharp flavour — white fish, lime, red onion, aji amarillo, cilantro — is both incredibly simple and precisely calibrated. The contrast between cold cured fish and warm sweet potato and corn alongside demonstrates the sophistication of Peruvian food thinking: temperature, texture, and flavour all working together.</p>`,
+    ingredients: ['500g very fresh white fish — sea bass, halibut, or sole (must be sashimi-grade)','Juice of 10–12 limes (about 200ml) — freshly squeezed only','1 small red onion, sliced paper-thin','1–2 aji amarillo chilies, deseeded and finely sliced (or substitute yellow/orange chili)','Large handful fresh cilantro leaves','Sea salt','To serve: boiled sweet potato sliced; corn kernels; crisp lettuce leaves'],
+    steps: ['Slice red onion very thinly. Rinse in cold water 10 minutes to remove harshness. Drain and dry well.','Cut fish into 1.5–2cm cubes. Season lightly with sea salt.','Combine fish with lime juice — fish should be almost submerged. Add chili.','Marinate for exactly 10–15 minutes. The fish is done when the exterior is opaque but the centre remains slightly translucent. Over-marinating produces a rubbery texture.','Drain off most of the leche de tigre — reserve it. Add onion and cilantro. Toss gently.','Arrange on a cold plate with sweet potato and corn. Pour a little leche de tigre back over the fish. Serve immediately and cold.'],
+    note: 'Fish quality is the single most important factor. Properly frozen and thawed fish is safe — the freezing kills parasites. Do not use anything that smells even faintly of fish. Freshness is non-negotiable.'
+  },
+  {
+    name: 'Feijoada', country: 'Brazil', flag: '🇧🇷', region: 'americas',
+    time: '3–4 hrs', serves: 8, difficulty: 'Easy',
+    myth: 'Black beans and pork, slowly cooked. Time is the main ingredient.',
+    history: `<p>Feijoada is Brazil's national dish and one of the most important examples of food created by enslaved African people in the Americas. The dish was traditionally made from the parts of the pig that enslavers discarded — ears, feet, tails, and off-cuts — combined with black beans. The enslaved population of Brazil's sugar and coffee plantations transformed these scraps into something extraordinary, and the dish became, over generations, the national emblem of Brazilian cuisine.</p><p>Saturday is feijoada day in Brazil — the meal is traditionally eaten at midday, a long and communal affair accompanied by rice, collard greens, orange slices, and farofa (toasted cassava flour). The orange slices are not decorative: the acidity cuts the richness of the beans, and Vitamin C is said to aid iron absorption from the black beans.</p>`,
+    appeal: `<p>Feijoada has the elemental appeal of all great bean-and-pork dishes — from Boston baked beans to cassoulet. The combination of long-cooked legumes with smoky pork, in a thick darkened broth, is one of the world's most satisfying flavour profiles. The black beans carry everything: they absorb fat and smoke from the pork over long cooking and become something richer and more complex than beans have any right to be.</p><p>The accompanying elements — collard greens sautéed with garlic, rice, orange slices, farofa — turn it into a complete feast. The combination of everything on one plate is greater than any of its parts. This is food as social occasion, not just sustenance.</p>`,
+    ingredients: ['500g dried black beans, soaked overnight','300g smoked pork ribs','200g chouriço or linguiça sausage, sliced','200g pancetta or thick-cut bacon','150g carne seca or beef jerky (or additional smoked sausage)','1 large onion, diced','4 garlic cloves, minced','3 bay leaves, salt, black pepper','Orange slices, rice, farofa to serve','Collard greens: 300g collard greens or kale, 3 garlic cloves, olive oil, salt'],
+    steps: ['Drain soaked beans. In a large heavy pot, sear all pork pieces briefly over high heat.','Add beans, bay leaves, onion, and cold water to cover by 8cm. Bring to a boil, skim any foam.','Reduce to a low simmer. Cook covered 2.5–3 hours (or 45 minutes in a pressure cooker) until beans are very soft and broth is thick and dark.','Remove a large ladle of beans, mash them, return to pot — this thickens the broth naturally.','Add garlic for the final 30 minutes. Season well. The feijoada should be thick and deeply savoury.','For collard greens: roll leaves tightly, slice into thin ribbons. Sauté in olive oil with garlic over high heat 3–4 minutes until just wilted. Serve feijoada with rice, collard greens, farofa, and orange slices.'],
+    note: 'Carne seca (dried salted beef) is the traditional ingredient, available in Brazilian or Latin American stores. Soak it overnight to remove excess salt before using. Beef jerky is a workable substitute.'
+  },
+  {
+    name: 'Gumbo', country: 'USA (Louisiana)', flag: '🇺🇸', region: 'americas',
+    time: '2.5 hrs', serves: 8, difficulty: 'Moderate',
+    myth: 'Master the roux once and you own it forever. Everything else follows from that.',
+    history: `<p>Gumbo is the culinary expression of Louisiana's extraordinary cultural convergence. Its foundations come from West African cooking — the word gumbo derives from the Bantu word for okra, ki ngombo — and reflects the cooking of the enslaved Africans who brought okra to the Americas. To this was added French technique (the roux), Choctaw and Cherokee tradition (filé powder from sassafras leaves), Creole and Cajun seasoning, and Spanish, German, and Caribbean influences from New Orleans' trading port history.</p><p>No other single dish encapsulates as much American history as gumbo. It is a food of forced encounter, of cultures synthesising under brutal conditions into something that transcends all of them. That it is also deeply delicious is the final improbable fact of its story.</p>`,
+    appeal: `<p>The roux — flour and fat cooked until deep chocolate-brown — is one of the world's most potent flavour-building techniques. A properly made dark roux has a rich, nutty, toasted depth that forms the backbone of the gumbo and cannot be replicated by any shortcut. The smell of a dark roux cooking is one of the most evocative aromas in American cooking.</p><p>The combination of shrimp, andouille sausage, and chicken in the finished gumbo, served over white rice with filé powder, achieves a complex, smoky, deeply savoury depth that is completely its own. It is American cooking at its most historically layered and most culturally significant — and one of the best things to eat anywhere.</p>`,
+    ingredients: ['100ml neutral oil and 100g plain flour (equal weights — this is your roux)','The Holy Trinity: 2 large onions, 3 celery stalks, 2 green bell peppers — all finely diced','4 garlic cloves, minced','400g andouille or smoked sausage, sliced','400g large shrimp, peeled','300g cooked chicken thighs, shredded','100g okra, sliced into rounds','1.5L good chicken stock','1 tsp dried thyme, 2 bay leaves, 1 tsp cayenne, salt and pepper','Filé powder, cooked white rice, spring onions to serve'],
+    steps: ['Make the roux: heat oil in a heavy pot over medium heat. Add flour. Stir constantly with a wooden spoon — do not stop — for 35–45 minutes, adjusting heat to prevent burning, until the roux is the colour of dark chocolate. Do not rush, do not walk away.','The moment the roux is dark enough, add the Holy Trinity. The vegetables will sizzle dramatically and arrest the cooking. Stir vigorously for 5 minutes.','Add garlic. Stir 2 minutes.','Gradually add hot stock, whisking to incorporate the roux smoothly. Add sausage, thyme, bay, and cayenne. Bring to a simmer.','Simmer on low heat 1 hour, stirring occasionally. Add shredded chicken.','Add okra 20 minutes before serving. Add shrimp for the final 5 minutes — they cook very quickly. Season assertively. Serve over rice with filé powder and spring onions.'],
+    note: 'A burnt roux is a ruined gumbo — the bitterness is not correctable. If you see black specks or smell burnt flour, discard and start over. Stirring continuously is not optional.'
+  },
+  {
+    name: 'Jerk Chicken', country: 'Jamaica', flag: '🇯🇲', region: 'americas',
+    time: '1 hr + overnight marinade', serves: 6, difficulty: 'Easy',
+    myth: 'The marinade is the dish. Blend it in seconds, marinate overnight, and the grill does the rest.',
+    history: `<p>Jerk cooking is one of the oldest cooking techniques in the Caribbean, developed by the Maroons — communities of formerly enslaved Africans who escaped captivity and lived in the remote mountains of Jamaica. They combined indigenous Arawak methods (smoking over allspice wood) with West African spice traditions to produce a cooking method entirely its own: deep-marinated meat cooked over pimento wood smoke.</p><p>The jerk tradition spread from the Maroon communities to become Jamaica's defining culinary identity. Boston Bay in Portland Parish is considered the home of the original style; cooking over oil drum grills packed with pimento wood remains the authentic benchmark against which all jerk is measured. The allspice smoke is the ingredient that no indoor kitchen can fully replicate.</p>`,
+    appeal: `<p>Jerk chicken's global spread has been one of the great Caribbean cultural exports. The flavour — fruity and fiery from the scotch bonnet, warmly sweet from allspice (which contains eugenol, the aromatic compound also found in cloves and cinnamon), fragrant from thyme and spring onion — is distinctive and immediately associated with warmth in every sense.</p><p>The charring on charcoal is essential to the final result — the combination of caramelised marinade, smokiness, and deeply spiced meat produces something that indoor cooking can approximate but not fully replicate. Jerk chicken is food for fire, for outside, for occasions when the cooking is part of the event.</p>`,
+    ingredients: ['1 whole chicken, spatchcocked (or 6 bone-in thighs and drumsticks)','Jerk marinade: 4–6 scotch bonnet chilies (adjust to tolerance — even 1 gives significant heat), 6 spring onions, 4 garlic cloves, 3cm fresh ginger, 2 tsp ground allspice, 1 tsp dried thyme, 1 tsp cinnamon, ½ tsp nutmeg, 2 tbsp soy sauce, 2 tbsp brown sugar, juice of 1 lime, 2 tbsp neutral oil, salt and black pepper'],
+    steps: ['Blend all marinade ingredients to a rough paste. Taste — it should be intensely flavoured, hot, and fragrant. Adjust chili and seasoning.','Score chicken deeply through to the bone in multiple places — the marinade must penetrate deeply.','Rub marinade all over and into every cut. Marinate in the refrigerator for a minimum of 12 hours — 24 is better.','Prepare a charcoal grill. Cook chicken over medium-indirect heat with the lid on for 35–45 minutes, turning several times.','In the final 10 minutes, move chicken over direct coals to char the exterior. Watch carefully — the sugar in the marinade burns quickly.','Rest 10 minutes. Serve with rice and peas (kidney beans cooked in coconut milk), festival (fried sweet dumplings), and a simple slaw.'],
+    note: 'Scotch bonnets are genuinely very hot. For a family-friendly version, use 1 deseeded scotch bonnet. Do not substitute standard chili — the scotch bonnet has a distinctive fruity flavour note that is central to authentic jerk.'
+  },
+  {
+    name: 'Ropa Vieja', country: 'Cuba', flag: '🇨🇺', region: 'americas',
+    time: '3 hrs (mostly hands-off)', serves: 6, difficulty: 'Easy',
+    myth: 'Braise it, shred it, sauce it. No more than twenty minutes of active work.',
+    history: `<p>Ropa Vieja — "old clothes" — takes its name from the appearance of the shredded beef, which resembles colourful rags. The dish originated in the Canary Islands, brought to the Americas by Spanish colonists, and took hold in Cuba where it became, over centuries, the country's national dish. A Sephardic Jewish version — prepared before the Sabbath since it reheats beautifully — may also have contributed to its spread through the Caribbean.</p><p>In Cuba, ropa vieja is the meal of nostalgia, the dish of mothers and grandmothers, tied deeply to family and home. The combination of shredded braised beef with a sweet pepper and tomato sofrito reflects both the Spanish culinary inheritance and the creolisation of Caribbean cooking over four centuries.</p>`,
+    appeal: `<p>There is something universally compelling about braised, shredded beef — its tenderness, its ability to absorb sauce, its textural generosity. Ropa Vieja achieves this with an elegance that makes the result seem more complicated than the process. The sofrito base — peppers, onions, garlic, tomato — cooked until sweet and jammy, provides a depth that lifts the beef into something complete.</p><p>The dish also demonstrates a principle that transcends culture: that inexpensive, tough cuts of meat, given time and patience, produce results more satisfying than expensive ones. Flank steak, transformed by braising, is something the best grilled steak cannot match on a weeknight.</p>`,
+    ingredients: ['1kg flank steak or brisket','1 large onion, halved (for braising) + 1 large onion, sliced (for sauce)','2 red bell peppers, sliced','1 green bell pepper, sliced','4 garlic cloves, minced','400g crushed tomatoes','150ml dry white wine','1 tsp ground cumin, 1 tsp dried oregano, 2 bay leaves','Olive oil, salt, black pepper','Green olives and capers to finish (optional but traditional)'],
+    steps: ['Place flank steak in a pot with halved onion, bay leaf, and cold water to cover. Bring to a boil, then simmer covered for 2–2.5 hours until the beef pulls apart easily. Remove beef. Strain and reserve 300ml cooking stock.','Sauté sliced onion and peppers in olive oil over medium heat for 15 minutes until very soft and beginning to caramelise.','Add garlic, cumin, and oregano. Cook 2 minutes. Add wine and let it reduce by half.','Add crushed tomatoes and reserved beef stock. Simmer 15 minutes until slightly thickened. Season well.','Shred cooled beef with two forks, pulling along the grain to create long, thin strands. Add to the sauce.','Simmer together 15–20 minutes until the beef has absorbed the sauce. Add olives and capers. Check seasoning. Serve over white rice with black beans alongside.'],
+    note: 'Do not slice the beef — shred it. Pulling along the grain creates the characteristic long strands that carry the sauce on every surface. Against the grain produces short, chunky pieces that behave differently.'
+  }
+];
+
+const DEEP_END = [
+  { name: 'Peking Duck', country: 'China', flag: '🇨🇳', why: 'Traditional technique requires inflating the skin by hand, hanging and air-drying the duck for 24+ hours, and a specialised enclosed oven. Home roast duck is achievable; Peking Duck specifically is not.' },
+  { name: 'Croissants', country: 'France', flag: '🇫🇷', why: 'Laminated dough — 27 alternating layers of dough and butter — requires precise temperature control across two days of folding. Professional kitchens keep the room cold. Most home kitchens cannot.' },
+  { name: 'Cassoulet', country: 'France', flag: '🇫🇷', why: 'The traditional version requires duck confit made separately, Toulouse sausage sourced specifically, and multiple days of oven baking. A cassoulet without its components is something else entirely.' },
+  { name: 'Sushi & Nigiri', country: 'Japan', flag: '🇯🇵', why: 'Sushi rice technique takes experienced cooks years to master. Sourcing genuinely sashimi-grade fish safely requires a trusted fishmonger relationship that most home cooks do not have.' },
+  { name: 'Har Gow (Dim Sum)', country: 'China', flag: '🇨🇳', why: 'The pleating of the delicate rice starch wrappers — 7+ precise pleats per dumpling — is a skill requiring years of daily practice. Dim sum pastry chefs train specifically on this technique alone.' },
+  { name: 'Whole Roast Suckling Pig', country: 'Various', flag: '🌍', why: 'Requires a very young pig (4–6 weeks old) sourced specifically. Needs a specialised rotisserie, a wood-fired oven, or considerable outdoor infrastructure. Not a home kitchen project.' }
+];
+
+// ── RENDERING ──
+
+function getRegionColor(region) {
+  return REGION_META[region]?.color || '#666';
+}
+
+function renderCards(list) {
+  const grid = document.getElementById('grid');
+  document.getElementById('dish-count').textContent = list.length;
+  grid.innerHTML = list.length === 0
+    ? '<div class="no-results">No dishes found.</div>'
+    : list.map((d, i) => {
+      const c = getRegionColor(d.region);
+      return `<div class="card" data-index="${DISHES.indexOf(d)}" style="--region-color:${c}">
+        <div class="card-top">
+          <div class="card-flag-country"><span class="card-flag">${d.flag}</span>${d.country}</div>
+          <span class="region-badge" style="--region-color:${c}">${REGION_META[d.region].label}</span>
+        </div>
+        <div class="card-name">${d.name}</div>
+        <div class="card-myth">${d.myth}</div>
+        <div class="card-meta">
+          <div class="meta-item">Time&nbsp;<span>${d.time}</span></div>
+          <div class="meta-item">Serves&nbsp;<span>${d.serves}</span></div>
+          <div class="meta-item">Difficulty&nbsp;<span>${d.difficulty}</span></div>
+        </div>
+        <div class="card-arrow">↗</div>
+      </div>`;
+    }).join('');
+
+  grid.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', () => openModal(parseInt(card.dataset.index)));
+  });
+}
+
+function renderDeep() {
+  document.getElementById('deep-grid').innerHTML = DEEP_END.map(d => `
+    <div class="deep-card">
+      <span class="deep-badge">The Deep End</span>
+      <div class="deep-card-name">${d.flag} ${d.name}</div>
+      <div class="deep-card-country">${d.country}</div>
+      <div class="deep-card-why">${d.why}</div>
+    </div>
+  `).join('');
+}
+
+// ── MODAL ──
+
+let activeTab = 'history';
+
+function openModal(index) {
+  const d = DISHES[index];
+  const c = getRegionColor(d.region);
+  document.getElementById('m-flag').textContent = d.flag;
+  document.getElementById('m-country').textContent = d.country;
+  document.getElementById('m-badge').textContent = REGION_META[d.region].label;
+  document.getElementById('m-badge').style.setProperty('--region-color', c);
+  document.getElementById('m-title').textContent = d.name;
+  document.getElementById('m-myth').textContent = d.myth;
+
+  document.getElementById('tab-history').innerHTML = `
+    <div class="prose-heading">History &amp; Culture</div>
+    <div class="prose-section">${d.history}</div>`;
+
+  document.getElementById('tab-appeal').innerHTML = `
+    <div class="prose-heading">Why It Travels</div>
+    <div class="prose-section">${d.appeal}</div>`;
+
+  document.getElementById('tab-recipe').innerHTML = `
+    <div class="recipe-meta">
+      <div class="recipe-meta-item"><span class="recipe-meta-label">Time</span><span class="recipe-meta-value">${d.time}</span></div>
+      <div class="recipe-meta-item"><span class="recipe-meta-label">Serves</span><span class="recipe-meta-value">${d.serves}</span></div>
+      <div class="recipe-meta-item"><span class="recipe-meta-label">Difficulty</span><span class="recipe-meta-value">${d.difficulty}</span></div>
+    </div>
+    <div class="recipe-section-title">Ingredients</div>
+    <ul class="ingredients-list">${d.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+    <div class="recipe-section-title">Method</div>
+    <ol class="steps-list">${d.steps.map((s, i) => `<li><span class="step-num">${i+1}</span><span>${s}</span></li>`).join('')}</ol>
+    ${d.note ? `<div class="recipe-note"><strong>Note —</strong> ${d.note}</div>` : ''}`;
+
+  switchTab('history');
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.toggle('active', c.id === `tab-${tab}`));
+  document.querySelector('.modal-body').scrollTop = 0;
+}
+
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target === document.getElementById('modal-overlay')) closeModal(); });
+document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ── FILTERS & SEARCH ──
+
+let activeRegion = 'all';
+let searchQuery = '';
+
+function filterAndRender() {
+  let list = DISHES;
+  if (activeRegion !== 'all') list = list.filter(d => d.region === activeRegion);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    list = list.filter(d => d.name.toLowerCase().includes(q) || d.country.toLowerCase().includes(q));
+  }
+  renderCards(list);
+}
+
+document.querySelectorAll('.pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    activeRegion = pill.dataset.region;
+    filterAndRender();
+  });
+});
+
+document.getElementById('search').addEventListener('input', e => {
+  searchQuery = e.target.value.trim();
+  filterAndRender();
+});
+
+// ── INIT ──
+renderCards(DISHES);
+renderDeep();
+</script>
+</body>
+</html>
